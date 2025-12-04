@@ -1,0 +1,112 @@
+:root {
+    --radius: 0.625rem;
+
+    /* Base */
+    --background: oklch(0.99 0.01 271);
+    /* #fafffb */
+    --foreground: oklch(0.20 0.02 260);
+    /* zinc-900 ish */
+
+    /* Surfaces */
+    --card: oklch(0.99 0.01 271);
+    --card-foreground: var(--foreground);
+    --popover: oklch(0.99 0.005 160);
+    --popover-foreground: var(--foreground);
+
+    /* Primary — #41894e */
+    --primary: oklch(71.48% 0.09245 152.622);
+    --primary-foreground: oklch(0.98 0 0);
+
+    /* Secondary */
+    --secondary: oklch(0.94 0.01 160);
+    --secondary-foreground: oklch(0.25 0.02 260);
+
+    /* Muted */
+    --muted: oklch(0.94 0.01 160);
+    --muted-foreground: oklch(0.45 0.02 260);
+
+    /* Accent */
+    --accent: oklch(0.95 0.02 160);
+    --accent-foreground: oklch(0.18 0.02 260);
+
+    /* Danger */
+    --destructive: oklch(0.60 0.22 25);
+    /* elegant red */
+    --destructive-foreground: oklch(0.98 0 0);
+
+    /* Borders & Inputs */
+    --border: oklch(0.90 0.01 160);
+    --input: oklch(0.90 0.01 160);
+    --ring: oklch(0.70 0.02 160);
+
+    /* Charts (harmonizadas em verde + tons neutros) */
+    --chart-1: oklch(0.65 0.15 150);
+    --chart-2: oklch(0.60 0.10 180);
+    --chart-3: oklch(0.70 0.08 200);
+    --chart-4: oklch(0.82 0.12 90);
+    --chart-5: oklch(0.75 0.14 60);
+
+    /* Sidebar */
+    --sidebar: oklch(93.803% 0.02481 160.809);
+    --sidebar-foreground: var(--foreground);
+    --sidebar-primary: var(--primary);
+    --sidebar-primary-foreground: var(--primary-foreground);
+    --sidebar-accent: oklch(90.294% 0.03832 155.027);
+    --sidebar-accent-foreground: var(--foreground);
+    --sidebar-border: oklch(0.90 0.01 160);
+    --sidebar-ring: var(--ring);
+}
+
+.dark {
+    /* Base */
+    --background: oklch(0.15 0.01 260);
+    --foreground: oklch(0.99 0.01 271);
+
+    /* Surfaces */
+    --card: oklch(0.20 0.01 260);
+    --card-foreground: var(--foreground);
+    --popover: oklch(0.20 0.01 260);
+    --popover-foreground: var(--foreground);
+
+    /* Primary — deeper version of #41894e */
+    --primary: oklch(0.50 0.10 150);
+    --primary-foreground: oklch(0.98 0 0);
+
+    /* Secondary */
+    --secondary: oklch(0.22 0.01 260);
+    --secondary-foreground: var(--foreground);
+
+    /* Muted */
+    --muted: oklch(0.22 0.01 260);
+    --muted-foreground: oklch(0.70 0.02 160);
+
+    /* Accent */
+    --accent: oklch(0.25 0.02 160);
+    --accent-foreground: var(--foreground);
+
+    /* Danger */
+    --destructive: oklch(0.58 0.22 25);
+    --destructive-foreground: var(--foreground);
+
+    /* Borders & Inputs */
+    --border: oklch(0.20 0.01 260 / 0.4);
+    --input: oklch(0.20 0.01 260 / 0.5);
+    --ring: oklch(0.75 0.02 160);
+
+    /* Charts (dark-mode friendly) */
+    --chart-1: oklch(0.65 0.15 150);
+    --chart-2: oklch(0.70 0.10 180);
+    --chart-3: oklch(0.75 0.12 60);
+    --chart-4: oklch(0.55 0.16 200);
+    --chart-5: oklch(0.65 0.16 90);
+
+    /* Sidebar */
+    --sidebar: oklch(0.18 0.01 260);
+    --sidebar-foreground: var(--foreground);
+    --sidebar-primary: var(--primary);
+    --sidebar-primary-foreground: var(--primary-foreground);
+    --sidebar-accent: oklch(0.25 0.02 260);
+    --sidebar-accent-foreground: var(--foreground);
+    --sidebar-border: oklch(0.20 0.01 260 / 0.4);
+    --sidebar-ring: var(--ring);
+}
