@@ -31,7 +31,6 @@ import {
 import { LuCalendar, LuLayoutDashboard } from "react-icons/lu"
 import { Link } from "react-router-dom"
 import { useAuthContext } from "@/hooks/context/useAuthContext"
-import type { IconType } from "react-icons/lib"
 
 interface Nav {
   navMain: NavMainItem[]
