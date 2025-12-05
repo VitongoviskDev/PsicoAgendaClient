@@ -14,12 +14,12 @@ export const UserApi = {
             form.append("name", payload.name);
 
         // Só adiciona se houver profile_picutre
-        if (!!payload.profilePicture)
-            form.append("profile_picture", payload.profilePicture);
+        if (!!payload.profile_picture)
+            form.append("profile_picture", payload.profile_picture);
 
         form.append("_method", "put");
 
-        const { data } = await api.post<UpdateUserResponse>(`/users/${payload.id}`, form);
+        const { data } = await api.post<UpdateUserResponse>(`/users/${payload.routeParams["id"]}`, form);
         return data;
     }
 };

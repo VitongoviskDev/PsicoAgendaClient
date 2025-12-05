@@ -28,8 +28,8 @@ export const AuthAPI = {
         return data;
     },
 
-    async register(payload: RegisterPayload): Promise<RegisterResponse> {
-        const { data } = await api.post<RegisterResponse>("/auth/register", payload);
+    async registerOwner(payload: RegisterPayload): Promise<RegisterResponse> {
+        const { data } = await api.post<RegisterResponse>("/auth/register-owner", payload);
         return data;
     },
 

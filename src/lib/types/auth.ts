@@ -39,50 +39,49 @@ export interface ChangePasswordPayload {
 }
 //---------- RESPONSES --------------------------------------------------
 
-export interface LoginResponse extends BaseResponse {
+export interface LoginResponse extends BaseResponse<{
     token_type: string;
     access_token: string;
     user: User;
-    // settings: Preferences;
-}
+}> { }
 
-export interface LogoutResposne extends BaseResponse { }
+export interface LogoutResposne extends BaseResponse<{}> { }
 
-export interface RegisterResponse extends BaseResponse {
+export interface RegisterResponse extends BaseResponse<{
     user: User;
     access_token: string;
-}
+}> { }
 
-export interface ForgotPasswordReseponse extends BaseResponse { }
+export interface ForgotPasswordReseponse extends BaseResponse<{}> { }
 
-export interface MeResponse extends BaseResponse {
+export interface MeResponse extends BaseResponse<{
     user: User;
     access_token: string;
     // enterprise: Enterprise;
-}
+}> { }
 
-export interface ResendVerificationEmailResponse extends BaseResponse { }
+export interface ResendVerificationEmailResponse extends BaseResponse<{}> { }
 
-export interface ChangePasswordResponse extends BaseResponse { }
+export interface ChangePasswordResponse extends BaseResponse<{}> { }
 
 //---------- ERRORS --------------------------------------------------
 
-export interface LoginCustomError extends BaseCustomError {
+export interface LoginCustomError extends BaseCustomError<{
     user?: User;
-}
+}> { }
 
-export interface LogoutCustomErrror extends BaseCustomError { }
+export interface LogoutCustomErrror extends BaseCustomError<{}> { }
 
-export interface RegisterCustomError extends BaseCustomError {
-    errors: TErrorField<"name" | "email" | "password" | "confirmPassword">[];
-}
+export interface RegisterCustomError extends BaseCustomError<{
+    errors: TErrorField<"name" | "email" | "password" | "confirm_password">[];
+}> { }
 
-export interface ForgotPasswordCustomError extends BaseCustomError { }
+export interface ForgotPasswordCustomError extends BaseCustomError<{}> { }
 
-export interface MeCustomError extends BaseCustomError { }
+export interface MeCustomError extends BaseCustomError<{}> { }
 
-export interface ResendVerificationEmailCustomError extends BaseCustomError { }
+export interface ResendVerificationEmailCustomError extends BaseCustomError<{}> { }
 
-export interface ChangePasswordCustomError extends BaseCustomError {
+export interface ChangePasswordCustomError extends BaseCustomError<{
     errors: TErrorField<"password" | "new_password" | "new_password_confirmation">[];
-}
+}> { }

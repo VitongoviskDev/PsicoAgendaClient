@@ -31,14 +31,24 @@ import {
 import { LuCalendar, LuLayoutDashboard } from "react-icons/lu"
 import { Link } from "react-router-dom"
 import { useAuthContext } from "@/hooks/context/useAuthContext"
+import TeamSwitcher, { type TeamSwitcherItems } from "./team-switcher"
+
 
 interface Nav {
+  teams: TeamSwitcherItems[]
   navMain: NavMainItem[]
   navSecondary: NavSecondaryItem[]
   navUser: NavUserGroup[]
 }
 
 const data: Nav = {
+  teams: [
+    {
+      name: "Stephany CO",
+      logo: "asd",
+      plan: "Pro"
+    }
+  ],
   navMain: [
     {
       title: "Dashboard",
@@ -147,21 +157,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar variant="inset" {...props}>
       <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
-              <Link to="#">
-                <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                  <Command className="size-4" />
-                </div>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">Acme Inc</span>
-                  <span className="truncate text-xs">Enterprise</span>
-                </div>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
+        <TeamSwitcher teams={data.teams} />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />

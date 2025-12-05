@@ -50,14 +50,16 @@ export const AuthService = {
             return await AuthAPI.login(payload);
         } catch (err) {
             const axiosError = err as AxiosError<LoginCustomError>;
-            throw {
+            const customError: LoginCustomError = {
                 status: axiosError.response?.status || 500,
                 message:
                     axiosError.response?.data?.message ||
                     axiosError.message ||
                     "Erro desconhecido",
-                user: axiosError.response?.data?.user || null
-            } as LoginCustomError;
+                error: axiosError.response?.data?.error
+            }
+
+            throw customError;
         }
     },
 
@@ -76,19 +78,21 @@ export const AuthService = {
         }
     },
 
-    async register(payload: RegisterPayload): Promise<RegisterResponse> {
+    async registerOwner(payload: RegisterPayload): Promise<RegisterResponse> {
         try {
-            return await AuthAPI.register(payload);
+            return await AuthAPI.registerOwner(payload);
         } catch (err) {
-            const axiosError = err as AxiosError<any>;
-            throw {
+            const axiosError = err as AxiosError<RegisterCustomError>;
+            const customError: RegisterCustomError = {
                 status: axiosError.response?.status || 500,
                 message:
                     axiosError.response?.data?.message ||
                     axiosError.message ||
                     "Erro desconhecido",
-                errors: axiosError.response?.data?.errors || [],
-            } as RegisterCustomError;
+                error: axiosError.response?.data?.error
+            }
+
+            throw customError;
         }
     },
 

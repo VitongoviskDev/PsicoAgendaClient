@@ -1,12 +1,18 @@
-export interface BaseResponse {
+export type BaseResponse<TData> = {
     message: string;
-}
-export type RouteParamsType = string | number;
-export interface BasePayload {
-    routeParams: Record<string, RouteParamsType>
-}
-export interface BaseCustomError {
+    data: TData
     status: number;
+}
+export type RouteParamsTypes = string | number;
+export type RouteParams = Record<string, RouteParamsTypes>
+
+export interface BasePayload {
+    routeParams: RouteParams;
+}
+
+export type BaseCustomError<TData> = {
+    status: number;
+    error?: TData
     message: string;
 }
 
@@ -31,9 +37,9 @@ export const defaultPaginateParams: PaginateParams = {
     per_page: 25,
 }
 
-export interface ServerCustomError extends BaseCustomError {
+export interface ServerCustomError extends BaseCustomError<{
     error: string;
-}
+}> { }
 
 
 export type TErrorField<TData> = {

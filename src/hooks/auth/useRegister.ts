@@ -6,8 +6,8 @@ import type {
 } from "@/lib/types/auth";
 import { useMutation } from "@tanstack/react-query";
 
-export function useRegister() {
+export function useRegisterOwner() {
     return useMutation<RegisterResponse, RegisterCustomError, RegisterPayload>({
-        mutationFn: AuthService.register,
+        mutationFn: AuthService.registerOwner,
     });
 }

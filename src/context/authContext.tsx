@@ -1,6 +1,5 @@
-import { setLogoutHandler } from "@/lib/apis/client";
 import { useLogin } from "@/hooks/auth/useLogin";
-import { useRegister } from "@/hooks/auth/useRegister";
+import { setLogoutHandler } from "@/lib/apis/client";
 
 // import { useEnterprise } from "@/hooks/enterprise/useEnterprise";
 // import { usePreference } from "@/hooks/preferences/usePreferences";
@@ -17,16 +16,15 @@ import type {
     RegisterPayload,
 } from "@/lib/types/auth";
 
+import { useRegisterOwner } from "@/hooks/auth/useRegister";
 import type {
+    UpdateUserPayload,
+    UpdateUserResponse,
     User
 } from "@/lib/types/user";
 import { createContext, useState, type ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import type {
-    UpdateUserPayload,
-    UpdateUserResponse
-} from "@/lib/types/user";
 
 interface AuthContextType {
     user: User | null;
@@ -34,7 +32,7 @@ interface AuthContextType {
 
     loginUser: (payload: LoginPayload) => Promise<void>;
     logoutUser: () => void;
-    registerUser: (payload: RegisterPayload) => Promise<void>;
+    registerOwner: (payload: RegisterPayload) => Promise<void>;
     recoveryPasswordUser: (payload: ForgotPasswordPayload) => Promise<void>;
     getMe: (payload?: MePayload) => Promise<void>
 
@@ -58,7 +56,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const navigate = useNavigate();
     const loginMutation = useLogin();
-    const registerMutation = useRegister();
+    const registerOwnerMutation = useRegisterOwner();
 
     const updateUserMutation = useUpdateUser();
 
@@ -73,17 +71,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     async function loginUser(payload: LoginPayload) {
         try {
-            const data = await loginMutation.mutateAsync(payload);
+            const response = await loginMutation.mutateAsync(payload);
 
-            setToken(data.access_token);
-            localStorage.setItem("token", data.access_token);
+            setToken(response.data.access_token);
+            localStorage.setItem("token", response.data.access_token);
 
-            onLogin(data)
+            onLogin(response)
 
             navigate("/");
         } catch (err) {
             console.log("ERROR: ", err)
-            const error = err as LoginCustomError;
+            const error = (err as LoginCustomError).error;
             if (error && error.user) {
                 setUser(error.user);
                 localStorage.setItem("user", JSON.stringify(error.user));
@@ -93,8 +91,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     const onLogin = (data: LoginResponse) => {
-        setUser(data.user);
-        localStorage.setItem("user", JSON.stringify(data.user));
+        setUser(data.data.user);
+        localStorage.setItem("user", JSON.stringify(data.data.user));
 
         // changeCurrentEnterprise(data.enterprise);
         // setPreferences(data.settings)
@@ -105,17 +103,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         // setRole(role)
     }
 
-    async function registerUser(payload: RegisterPayload) {
+    async function registerOwner(payload: RegisterPayload) {
         try {
-            const data = await registerMutation.mutateAsync(payload);
+            const response = await registerOwnerMutation.mutateAsync(payload);
 
-            localStorage.setItem("user", JSON.stringify(data.user));
-            localStorage.setItem("token", data.access_token);
-            setToken(data.access_token);
+            // localStorage.setItem("user", JSON.stringify(response.data.user));
+            // localStorage.setItem("token", response.data.access_token);
+            // setToken(response.data.access_token);
 
-            setUser(data.user);
+            // setUser(response.data.user);
 
-            navigate("/email-verification");
+            // navigate("/email-verification");
+            navigate("/login");
         } catch (err) {
             throw err;
         }
@@ -150,7 +149,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     async function logoutUser() {
-        await AuthService.logout();
+        alert("")
+        // await AuthService.logout();
         onLogout();
     }
 
@@ -163,13 +163,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     async function updateUser(payload: UpdateUserPayload) {
         try {
-            const data = await updateUserMutation.mutateAsync(payload);
+            const response = await updateUserMutation.mutateAsync(payload);
 
-            console.log("DATA:", data)
-            setUser(data.user);
-            localStorage.setItem("user", JSON.stringify(data.user));
+            console.log("DATA:", response)
+            setUser(response.data.user);
+            localStorage.setItem("user", JSON.stringify(response.data.user));
 
-            return data;
+            return response;
         } catch (err) {
             throw err;
         }
@@ -182,7 +182,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 token,
                 loginUser,
                 logoutUser,
-                registerUser,
+                registerOwner,
                 recoveryPasswordUser,
                 getMe,
                 updateUser,
