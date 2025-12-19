@@ -19,7 +19,7 @@ import { Input } from '@/components/ui/input'
 import { Spinner } from '@/components/ui/spinner'
 import { Textarea } from '@/components/ui/textarea'
 import type { DialogKey } from '@/context/dialogContext'
-import { useDialog } from '@/hooks/context/useDialogContext'
+import { useDialogContext } from '@/hooks/context/useDialogContext'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect, useState, type FC } from 'react'
 import { useForm } from 'react-hook-form'
@@ -43,7 +43,7 @@ interface CreateCategoryModalProps {
 
 const CreateAppointmentDialog: FC<CreateCategoryModalProps> = ({ dialogKey, date }) => {
 
-  const { activeDialog, closeDialog } = useDialog();
+  const { activeDialog, closeDialog } = useDialogContext();
 
   const initialDate = new Date();
   initialDate.setHours(11, 0, 0, 0);

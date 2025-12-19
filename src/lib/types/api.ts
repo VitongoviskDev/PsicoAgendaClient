@@ -46,4 +46,4 @@ export type TErrorField<TData> = {
     field: TData;
     errors: string[]
 }
-export type TPicture = File | string | null;
+export type TPicture = Blob | File;

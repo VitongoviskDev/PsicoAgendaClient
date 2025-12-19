@@ -22,25 +22,15 @@ import { getInitials } from "@/lib/utils"
 import type { FC } from "react"
 import { LuSettings2 } from "react-icons/lu"
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
+import { useClinicContext } from "@/hooks/context/useClinicContext"
 
 
-export interface TeamSwitcherItems {
-    name: string
-    logo?: string
-    plan: string
-}
-interface TeamsProps {
-    teams: TeamSwitcherItems[]
-}
-const TeamSwitcher: FC<TeamsProps> = ({ teams }) => {
+const TeamSwitcher: FC = () => {
     const { isMobile } = useSidebar()
-    const [activeTeam, setActiveTeam] = React.useState(teams[0])
-
-    if (!activeTeam) {
-        return null
-    }
+    const { currentClinic, clinics, updateCurrentClinic } = useClinicContext();
 
     return (
+        currentClinic &&
         <SidebarMenu>
             <SidebarMenuItem>
                 <DropdownMenu>
@@ -50,12 +40,12 @@ const TeamSwitcher: FC<TeamsProps> = ({ teams }) => {
                             className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                         >
                             <Avatar className="h-8 w-8 rounded-lg">
-                                <AvatarImage src={activeTeam.logo} alt={activeTeam.name} />
-                                <AvatarFallback className="rounded-lg">{getInitials(activeTeam.name)}</AvatarFallback>
+                                {/* <AvatarImage src={currentClinic.logo} alt={currentClinic.name} /> */}
+                                <AvatarFallback className="rounded-lg">{getInitials(currentClinic.name)}</AvatarFallback>
                             </Avatar>
                             <div className="grid flex-1 text-left text-sm leading-tight">
-                                <span className="truncate font-medium">{activeTeam.name}</span>
-                                <span className="truncate text-xs">{activeTeam.plan}</span>
+                                <span className="truncate font-medium">{currentClinic.name}</span>
+                                {/* <span className="truncate text-xs">{clinic.plan}</span> */}
                             </div>
                             <ChevronsUpDown className="ml-auto" />
                         </SidebarMenuButton>
@@ -76,17 +66,17 @@ const TeamSwitcher: FC<TeamsProps> = ({ teams }) => {
                         <DropdownMenuLabel className="text-muted-foreground text-xs">
                             Teams
                         </DropdownMenuLabel>
-                        {teams.map((team, index) => (
+                        {clinics.map((cli, index) => (
                             <DropdownMenuItem
-                                key={team.name}
-                                onClick={() => setActiveTeam(team)}
+                                key={cli.name}
+                                onClick={() => updateCurrentClinic(cli)}
                                 className="gap-2 p-2"
                             >
                                 <Avatar className="h-8 w-8 rounded-lg">
-                                    <AvatarImage src={activeTeam.logo} alt={activeTeam.name} />
-                                    <AvatarFallback className="rounded-lg">{getInitials(activeTeam.name)}</AvatarFallback>
+                                    {/* <AvatarImage src={cli.logo} alt={cli.name} /> */}
+                                    <AvatarFallback className="rounded-lg">{getInitials(cli.name)}</AvatarFallback>
                                 </Avatar>
-                                {team.name}
+                                {cli.name}
                                 <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
                             </DropdownMenuItem>
                         ))}

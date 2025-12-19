@@ -6,7 +6,7 @@ import type {
     ForgotPasswordPayload,
     ResendVerificationEmailPayload,
     LoginResponse,
-    RegisterResponse,
+    RegisterOwnerResponse,
     ForgotPasswordReseponse,
     MeResponse,
     LoginCustomError,
@@ -21,9 +21,31 @@ import type {
     ChangePasswordPayload,
     ChangePasswordResponse,
     ChangePasswordCustomError,
+    CompleteRegistrationPayload,
+    CompleteRegistrationResponse,
+    CompleteRegistrationCustomError,
+    RegisterOwnerPayload,
 } from "@/lib/types/auth";
 
 export const AuthService = {
+    async registerOwner(payload: RegisterOwnerPayload): Promise<RegisterOwnerResponse> {
+        try {
+            return await AuthAPI.registerOwner(payload);
+        } catch (err) {
+            const axiosError = err as AxiosError<RegisterCustomError>;
+            const customError: RegisterCustomError = {
+                status: axiosError.response?.status || 500,
+                message:
+                    axiosError.response?.data?.message ||
+                    axiosError.message ||
+                    "Erro desconhecido",
+                error: axiosError.response?.data?.error
+            }
+
+            throw customError;
+        }
+    },
+
     async me(payload: MePayload): Promise<LoginResponse> {
         try {
 
@@ -78,24 +100,6 @@ export const AuthService = {
         }
     },
 
-    async registerOwner(payload: RegisterPayload): Promise<RegisterResponse> {
-        try {
-            return await AuthAPI.registerOwner(payload);
-        } catch (err) {
-            const axiosError = err as AxiosError<RegisterCustomError>;
-            const customError: RegisterCustomError = {
-                status: axiosError.response?.status || 500,
-                message:
-                    axiosError.response?.data?.message ||
-                    axiosError.message ||
-                    "Erro desconhecido",
-                error: axiosError.response?.data?.error
-            }
-
-            throw customError;
-        }
-    },
-
     async forgotPassword(payload: ForgotPasswordPayload): Promise<ForgotPasswordReseponse> {
         try {
             return await AuthAPI.forgotPassword(payload);
@@ -140,6 +144,7 @@ export const AuthService = {
             } as ResendVerificationEmailCustomError;
         }
     },
+
     async changePassword(payload: ChangePasswordPayload): Promise<ChangePasswordResponse> {
         try {
             return await AuthAPI.changePassword(payload);

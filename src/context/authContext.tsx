@@ -8,16 +8,21 @@ import { useUpdateUser } from "@/hooks/user/useUpdateUser";
 import { AuthService } from "@/lib/services/auth.service";
 
 import type {
+    CompleteRegistrationPayload,
     ForgotPasswordPayload,
     LoginCustomError,
     LoginPayload,
-    LoginResponse,
     MePayload,
-    RegisterPayload,
+    RegisterOwnerPayload
 } from "@/lib/types/auth";
 
 import { useRegisterOwner } from "@/hooks/auth/useRegister";
+import { emit } from "@/lib/eventBus";
 import type {
+    CompleteOwnerProfileCustomError,
+    CompleteOwnerProfilePayload,
+    CompleteOwnerProfileResponse,
+    UpdateUserCustomError,
     UpdateUserPayload,
     UpdateUserResponse,
     User
@@ -25,24 +30,26 @@ import type {
 import { createContext, useState, type ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { useCompleteOwnerProfile } from "@/hooks/user/useCompleteOwnerProfile";
 
 interface AuthContextType {
     user: User | null;
     token: string | null;
+    isAuthenticated: boolean;
 
-    loginUser: (payload: LoginPayload) => Promise<void>;
-    logoutUser: () => void;
-    registerOwner: (payload: RegisterPayload) => Promise<void>;
+    handleLogin: (payload: LoginPayload) => Promise<void>;
+    handleLogout: () => void;
+    handleRegisterOwner: (payload: RegisterOwnerPayload) => Promise<void>;
     recoveryPasswordUser: (payload: ForgotPasswordPayload) => Promise<void>;
-    getMe: (payload?: MePayload) => Promise<void>
+    handleGetMe: (payload?: MePayload) => Promise<void>
 
-    updateUser: (payload: UpdateUserPayload) => Promise<UpdateUserResponse>;
+    handleUpdateUser: (payload: UpdateUserPayload) => Promise<UpdateUserResponse>;
+    handleCompleteOwnerProfile: (payload: CompleteOwnerProfilePayload) => Promise<CompleteOwnerProfileResponse>;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-
 
     const [user, setUser] = useState<User | null>(() => {
         const storedUser = localStorage.getItem("user");
@@ -50,15 +57,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
     const [token, setToken] = useState<string | null>(() => localStorage.getItem("token"));
 
+    const isAuthenticated = !!user && !!token;
+
+    const navigate = useNavigate();
+
     // const { changeCurrentEnterprise } = useEnterprise();
     // const { setPreferences } = usePreference();
     // const { setRole } = useRoleContext();
 
-    const navigate = useNavigate();
     const loginMutation = useLogin();
     const registerOwnerMutation = useRegisterOwner();
+    const completeOwnerProfileMutation = useCompleteOwnerProfile();
 
     const updateUserMutation = useUpdateUser();
+
 
 
     const clearSessionData = () => {
@@ -69,16 +81,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setToken(null);
     };
 
-    async function loginUser(payload: LoginPayload) {
+    async function handleLogin(payload: LoginPayload) {
         try {
             const response = await loginMutation.mutateAsync(payload);
+
+            setUser(response.data.user);
+            localStorage.setItem("user", JSON.stringify(response.data.user));
 
             setToken(response.data.access_token);
             localStorage.setItem("token", response.data.access_token);
 
-            onLogin(response)
+            // updateCurrentClinic(response.data.clinic)
+            // updateClinics(response.data.clinics)
 
-            navigate("/");
+            emit("login", {
+                clinic: response.data.currentClinic,
+                clinics: response.data.clinics
+            });
+
+            navigate("/")
+
         } catch (err) {
             console.log("ERROR: ", err)
             const error = (err as LoginCustomError).error;
@@ -90,31 +112,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
     }
 
-    const onLogin = (data: LoginResponse) => {
-        setUser(data.data.user);
-        localStorage.setItem("user", JSON.stringify(data.data.user));
-
-        // changeCurrentEnterprise(data.enterprise);
-        // setPreferences(data.settings)
-
-        // const role: Role = {
-        //     role: data.enterprise.role!
-        // }
-        // setRole(role)
-    }
-
-    async function registerOwner(payload: RegisterPayload) {
+    async function handleRegisterOwner(payload: RegisterOwnerPayload) {
         try {
             const response = await registerOwnerMutation.mutateAsync(payload);
 
-            // localStorage.setItem("user", JSON.stringify(response.data.user));
-            // localStorage.setItem("token", response.data.access_token);
-            // setToken(response.data.access_token);
+            setUser(response.data.user);
+            localStorage.setItem("user", JSON.stringify(response.data.user));
 
-            // setUser(response.data.user);
+            setToken(response.data.access_token);
+            localStorage.setItem("token", response.data.access_token);
 
-            // navigate("/email-verification");
-            navigate("/login");
+            emit("register", {
+                clinic: response.data.currentClinic,
+                clinics: response.data.clinics
+            });
+
+            navigate("/pre-registration")
         } catch (err) {
             throw err;
         }
@@ -130,38 +143,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
     }
 
-    async function getMe(payload?: MePayload) {
+    async function handleGetMe(payload?: MePayload) {
         try {
             const filteredPayload = {
                 ...payload,
                 token: payload?.token || token || ""
             };
-            const data = await AuthService.me(filteredPayload);
+            const response = await AuthService.me(filteredPayload);
+
+            setUser(response.data.user);
+            localStorage.setItem("user", JSON.stringify(response.data.user));
 
             setToken(filteredPayload.token);
             localStorage.setItem("token", filteredPayload.token);
-
-            onLogin(data);
-
         } catch (err) {
             throw err;
         }
     }
 
-    async function logoutUser() {
-        alert("")
+    async function handleLogout() {
         // await AuthService.logout();
         onLogout();
     }
 
     function onLogout() {
-        navigate("/login");
+        emit("logout", {})
         clearSessionData();
     }
 
     setLogoutHandler(onLogout);
 
-    async function updateUser(payload: UpdateUserPayload) {
+    async function handleUpdateUser(payload: UpdateUserPayload) {
         try {
             const response = await updateUserMutation.mutateAsync(payload);
 
@@ -175,17 +187,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
     }
 
+    async function handleCompleteOwnerProfile(payload: CompleteOwnerProfilePayload) {
+        try {
+            const response = await completeOwnerProfileMutation.mutateAsync(payload);
+
+            setUser(response.data.user);
+            localStorage.setItem("user", JSON.stringify(response.data.user));
+
+            return response;
+        } catch (err) {
+            throw err as CompleteOwnerProfileCustomError;
+        }
+    }
+
     return (
         <AuthContext.Provider
             value={{
                 user,
                 token,
-                loginUser,
-                logoutUser,
-                registerOwner,
+                isAuthenticated,
+                handleLogin,
+                handleLogout,
+                handleRegisterOwner,
                 recoveryPasswordUser,
-                getMe,
-                updateUser,
+                handleGetMe,
+                handleUpdateUser,
+
+                handleCompleteOwnerProfile,
             }}
         >
             {children}

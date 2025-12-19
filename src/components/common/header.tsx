@@ -1,16 +1,17 @@
 
 import { useHeaderContext } from "@/hooks/context/useHeaderContext"
 import { type FC } from "react"
+import { SidebarTrigger } from "../ui/sidebar"
 
 interface HeaderProps {
-    sidebarTrigger: React.ReactNode
+
 }
-const Header: FC<HeaderProps> = ({ sidebarTrigger }) => {
+const Header: FC<HeaderProps> = ({ }) => {
     const { pageTitle, pageDescription } = useHeaderContext()
 
     return (
         <header className="py-2 flex items-center justify-start gap-4 px-6 border-b bg-background w-full">
-            {sidebarTrigger}
+            <SidebarTrigger className="md:hidden" />
             <div className="flex flex-col items-start">
                 <h1 className="scroll-m-20 text-center text-2xl font-bold tracking-tight text-balance">
                     {pageTitle}

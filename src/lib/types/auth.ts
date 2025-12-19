@@ -1,9 +1,8 @@
-
+import type { User } from "./user";
+import type { BaseCustomError, BasePayload, BaseResponse, TErrorField } from "./api";
+import type { Clinic } from "./clinic";
 
 //---------- PAYLOADS --------------------------------------------------
-import type { User } from "./user";
-import type { BaseCustomError, BaseResponse, TErrorField } from "./api";
-
 // LOGIN
 export interface LoginPayload {
     email: string;
@@ -11,12 +10,36 @@ export interface LoginPayload {
 }
 
 //REGISTER
+export interface RegisterOwnerPayload {
+    user: {
+        name: string,
+        email: string,
+        password: string,
+        confirm_password: string,
+    },
+    clinic?: {
+        name: string,
+        address?: string,
+        phone?: string,
+        status?: string,
+    },
+    psychologist?: {
+        crp: string;
+    }
+}
+
 export interface RegisterPayload {
     name: string;
     email: string;
     password: string;
     password_confirmation: string;
     invite_token: string | null;
+}
+
+export interface CompleteRegistrationPayload {
+    clinic_id: string;
+    clinic_name: string;
+    image: File | null;
 }
 
 //FORGOT PASSWORD
@@ -38,19 +61,29 @@ export interface ChangePasswordPayload {
     new_password_confirmation: string;
 }
 //---------- RESPONSES --------------------------------------------------
+export interface RegisterOwnerResponse extends BaseResponse<{
+    user: User;
+    currentClinic: Clinic;
+    clinics: Clinic[];
+    access_token: string;
+}> { }
 
 export interface LoginResponse extends BaseResponse<{
-    token_type: string;
-    access_token: string;
     user: User;
+    currentClinic: Clinic;
+    clinics: Clinic[];
+    access_token: string;
+}> { }
+
+export interface CompleteRegistrationResponse extends BaseResponse<{
+    user: User;
+    clinic: Clinic;
+    clinics: Clinic[];
+    access_token: string;
+    token_type: string;
 }> { }
 
 export interface LogoutResposne extends BaseResponse<{}> { }
-
-export interface RegisterResponse extends BaseResponse<{
-    user: User;
-    access_token: string;
-}> { }
 
 export interface ForgotPasswordReseponse extends BaseResponse<{}> { }
 
@@ -74,6 +107,9 @@ export interface LogoutCustomErrror extends BaseCustomError<{}> { }
 
 export interface RegisterCustomError extends BaseCustomError<{
     errors: TErrorField<"name" | "email" | "password" | "confirm_password">[];
+}> { }
+export interface CompleteRegistrationCustomError extends BaseCustomError<{
+    errors: TErrorField<"name" | "image">[];
 }> { }
 
 export interface ForgotPasswordCustomError extends BaseCustomError<{}> { }

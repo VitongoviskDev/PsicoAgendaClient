@@ -1,6 +1,9 @@
 import { AuthProvider } from '@/context/authContext';
+import { ClinicProvider } from '@/context/clinicContext';
 import { DialogProvider } from '@/context/dialogContext';
 import { HeaderProvider } from '@/context/headerContext';
+import { PatientProvider } from '@/context/patientContext';
+import { StepperProvider } from '@/context/stepperContext';
 import { queryClient } from '@/lib/apis/queryClient';
 import { QueryClientProvider } from '@tanstack/react-query';
 import React, { type FC } from 'react';
@@ -16,11 +19,17 @@ const Providers: FC<ProvidesProps> = ({ children }) => {
             <QueryClientProvider client={queryClient}>
                 <BrowserRouter>
                     <DialogProvider>
-                        <HeaderProvider>
-                            <AuthProvider>
-                                {children}
-                            </AuthProvider>
-                        </HeaderProvider>
+                        <ClinicProvider>
+                            <HeaderProvider>
+                                <AuthProvider>
+                                    <PatientProvider>
+                                        <StepperProvider>
+                                            {children}
+                                        </StepperProvider>
+                                    </PatientProvider>
+                                </AuthProvider>
+                            </HeaderProvider>
+                        </ClinicProvider>
                     </DialogProvider>
                 </BrowserRouter>
             </QueryClientProvider>

@@ -1,12 +1,14 @@
-import { FC } from "react"
+import type { FC } from "react"
+
 
 interface DefaultContainerProps {
     children?: React.ReactNode
+    className?: string;
 }
 
-const DefaultContainer: FC<DefaultContainerProps> = ({ children }) => {
+const DefaultContainer: FC<DefaultContainerProps> = ({ children, className }) => {
     return (
-        <div className="p-4 md:p-8 lg:p-12">
+        <div className={`p-4 md:p-8 lg:p-12 ${className}`}>
             {children}
         </div>
     )

@@ -1,54 +1,25 @@
 "use client"
 
-import {
-  BadgeCheck,
-  BookOpen,
-  Command,
-  CreditCard,
-  Frame,
-  LifeBuoy,
-  Map,
-  PieChart,
-  Send,
-  Settings2,
-  Sparkles
-} from "lucide-react"
-import * as React from "react"
-
 import { NavMain, type NavMainItem } from "@/components/nav-main"
-import { NavProjects } from "@/components/nav-projects"
 import { NavSecondary, type NavSecondaryItem } from "@/components/nav-secondary"
 import { NavUser, type NavUserGroup } from "@/components/nav-user"
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
+  SidebarHeader
 } from "@/components/ui/sidebar"
-import { LuCalendar, LuLayoutDashboard } from "react-icons/lu"
-import { Link } from "react-router-dom"
-import { useAuthContext } from "@/hooks/context/useAuthContext"
-import TeamSwitcher, { type TeamSwitcherItems } from "./team-switcher"
+import { LuBadgeCheck, LuCalendar, LuChartColumn, LuCreditCard, LuLayoutDashboard, LuLifeBuoy, LuSend, LuSettings2, LuSparkles, LuUserCog, LuUsers } from "react-icons/lu"
+import TeamSwitcher from "./team-switcher"
 
 
 interface Nav {
-  teams: TeamSwitcherItems[]
   navMain: NavMainItem[]
   navSecondary: NavSecondaryItem[]
   navUser: NavUserGroup[]
 }
 
 const data: Nav = {
-  teams: [
-    {
-      name: "Stephany CO",
-      logo: "asd",
-      plan: "Pro"
-    }
-  ],
   navMain: [
     {
       title: "Dashboard",
@@ -62,62 +33,31 @@ const data: Nav = {
       icon: LuCalendar,
     },
     {
-      title: "Documentation",
-      url: "#",
-      icon: BookOpen,
-      items: [
-        {
-          title: "Introduction",
-          url: "#",
-        },
-        {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
-        },
-      ],
+      title: "Patients",
+      url: "/patients",
+      icon: LuUsers,
     },
     {
       title: "Settings",
-      url: "#",
-      icon: Settings2,
-      items: [
-        {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
-        },
-      ],
+      icon: LuSettings2,
+      url: "#"
+    },
+    {
+      title: "Administration",
+      icon: LuChartColumn,
+      url: "#"
     },
   ],
   navSecondary: [
     {
       title: "Support",
       url: "#",
-      icon: LifeBuoy,
+      icon: LuLifeBuoy,
     },
     {
       title: "Feedback",
       url: "#",
-      icon: Send,
+      icon: LuSend,
     },
   ],
   navUser: [
@@ -127,7 +67,7 @@ const data: Nav = {
         {
           title: "Upgrade to Pro",
           url: "#/upgrade",
-          icon: Sparkles,
+          icon: LuSparkles,
         }
       ]
     },
@@ -137,12 +77,12 @@ const data: Nav = {
         {
           title: "Perfil",
           url: "/profile",
-          icon: BadgeCheck
+          icon: LuBadgeCheck
         },
         {
           title: "Billing",
           url: "#/billing",
-          icon: CreditCard
+          icon: LuCreditCard
         }
       ]
     }
@@ -152,12 +92,10 @@ const data: Nav = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
-  const { user } = useAuthContext();
-
   return (
     <Sidebar variant="inset" {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+        <TeamSwitcher />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />

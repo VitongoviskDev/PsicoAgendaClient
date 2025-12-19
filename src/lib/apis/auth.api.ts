@@ -2,6 +2,8 @@
 import type {
     ChangePasswordPayload,
     ChangePasswordResponse,
+    CompleteRegistrationPayload,
+    CompleteRegistrationResponse,
     ForgotPasswordPayload,
     ForgotPasswordReseponse,
     LoginPayload,
@@ -9,14 +11,19 @@ import type {
     LogoutResposne,
     MePayload,
     MeResponse,
-    RegisterPayload,
-    RegisterResponse,
+    RegisterOwnerPayload,
+    RegisterOwnerResponse,
     ResendVerificationEmailPayload,
     ResendVerificationEmailResponse
 } from "@/lib/types/auth";
 import { api } from "./client";
 
 export const AuthAPI = {
+
+    async registerOwner(payload: RegisterOwnerPayload): Promise<RegisterOwnerResponse> {
+        const { data } = await api.post<RegisterOwnerResponse>("/auth/register-owner", payload);
+        return data;
+    },
 
     async login(payload: LoginPayload): Promise<LoginResponse> {
         const { data } = await api.post<LoginResponse>("/auth/login", payload);
@@ -25,11 +32,6 @@ export const AuthAPI = {
 
     async logout(): Promise<LogoutResposne> {
         const { data } = await api.post<LogoutResposne>("/auth/logout", {});
-        return data;
-    },
-
-    async registerOwner(payload: RegisterPayload): Promise<RegisterResponse> {
-        const { data } = await api.post<RegisterResponse>("/auth/register-owner", payload);
         return data;
     },
 
@@ -66,5 +68,16 @@ export const AuthAPI = {
             payload
         );
         return response.data;
+    },
+
+    async completeRegistration(payload: CompleteRegistrationPayload): Promise<CompleteRegistrationResponse> {
+        const { data } = await api.post<LoginResponse>(
+            "/auth/complete-registration",
+            payload,
+            {
+                headers: { "Content-Type": "multipart/form-data" }
+            }
+        );
+        return data;
     },
 };

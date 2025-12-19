@@ -16,6 +16,7 @@ import {
     FieldLabel,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { Spinner } from "@/components/ui/spinner"
 import { useAuthContext } from "@/hooks/context/useAuthContext"
 import type { LoginCustomError, LoginPayload } from "@/lib/types/auth"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -34,7 +35,7 @@ export type LoginFormData = z.infer<typeof loginSchema>;
 
 const LoginPage = () => {
 
-    const { loginUser } = useAuthContext();
+    const { handleLogin: loginUser } = useAuthContext();
 
     const {
         register,
@@ -102,8 +103,14 @@ const LoginPage = () => {
                             </Field>
 
                             <Field className="flex flex-col gap-2">
-                                <Button type="submit">
-                                    Login
+                                <Button type="submit" disabled={isPending}>
+                                    {
+                                        isPending ? (
+                                            <span className="flex items-center gap-2"><Spinner />Entrando</span>
+                                        ) : (
+                                            <span>Entrar</span>
+                                        )
+                                    }
                                 </Button>
 
                                 <FieldDescription className="text-center">

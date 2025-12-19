@@ -47,7 +47,7 @@ export function NavUser({
   groups: NavUserGroup[]
 }) {
   const { isMobile } = useSidebar()
-  const { user, logoutUser } = useAuthContext();
+  const { user, handleLogout: logoutUser } = useAuthContext();
   return (
     <SidebarMenu>
       <SidebarMenuItem>

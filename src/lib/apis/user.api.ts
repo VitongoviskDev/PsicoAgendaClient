@@ -1,4 +1,6 @@
 import type {
+    CompleteOwnerProfilePayload,
+    CompleteOwnerProfileResponse,
     UpdateUserPayload,
     UpdateUserResponse
 } from "@/lib/types/user";
@@ -20,6 +22,30 @@ export const UserApi = {
         form.append("_method", "put");
 
         const { data } = await api.post<UpdateUserResponse>(`/users/${payload.routeParams["id"]}`, form);
+        return data;
+    },
+    async completeOwnerProfile(payload: CompleteOwnerProfilePayload): Promise<CompleteOwnerProfileResponse> {
+        // const { data } = await api.put<UpdateUserResponse>(`/user/${payload.id}`, payload);
+        // return data;
+        const form = new FormData();
+
+        form.append('clinic_id', payload.clinic_id);
+        form.append('cpf', payload.cpf);
+        form.append('birthDate', payload.birthDate.toISOString());
+        form.append('phone', payload.phone);
+
+        form.append('actAsPsychologist', String(payload.actAsPsychologist));
+        if (payload.actAsPsychologist && payload.crp) {
+            form.append('crp', payload.crp);
+        }
+
+        if (payload.profile_picture) {
+            form.append('profile_picture', payload.profile_picture);
+        }
+
+        // form.append("_method", "put");
+
+        const { data } = await api.post<CompleteOwnerProfileResponse>(`/users/complete-profile/owner`, form);
         return data;
     }
 };

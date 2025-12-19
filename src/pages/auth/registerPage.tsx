@@ -1,6 +1,6 @@
 "use client"
 
-import { type FC } from "react"
+import { useState, type FC } from "react"
 import { Button } from "@/components/ui/button"
 import {
     Card,
@@ -22,9 +22,10 @@ import { useAuthContext } from "@/hooks/context/useAuthContext"
 import z from "zod"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import type { RegisterCustomError, RegisterPayload } from "@/lib/types/auth"
+import type { RegisterCustomError, RegisterOwnerPayload, RegisterPayload } from "@/lib/types/auth"
 import { toast } from "sonner"
 import { Spinner } from "@/components/ui/spinner"
+import { Switch } from "@/components/ui/switch"
 
 export const registerSchema = z.object({
     name: z.string().min(3, "Nome deve conter pelo menos 3 caracteres"),
@@ -36,7 +37,8 @@ export const registerSchema = z.object({
 export type RegisterFormData = z.infer<typeof registerSchema>;
 
 const RegisterPage: FC = () => {
-    const { registerOwner } = useAuthContext();
+    const { handleRegisterOwner: registerOwner } = useAuthContext();
+    const [psychologist, setPsychologist] = useState<boolean>(false);
 
     const {
         register,
@@ -49,12 +51,13 @@ const RegisterPage: FC = () => {
 
     const handleRegister = async (formData: RegisterFormData) => {
         try {
-            const registerPayload: RegisterPayload = {
-                name: formData.name,
-                email: formData.email,
-                password: formData.password,
-                password_confirmation: formData.confirm_password,
-                invite_token: null
+            const registerPayload: RegisterOwnerPayload = {
+                user: {
+                    name: formData.name,
+                    email: formData.email,
+                    password: formData.password,
+                    confirm_password: formData.confirm_password,
+                }
             }
 
             await registerOwner(registerPayload);
@@ -83,7 +86,7 @@ const RegisterPage: FC = () => {
 
             <CardContent>
                 <form onSubmit={handleSubmit(handleRegister)}>
-                    <FieldGroup>
+                    <FieldGroup className="gap-2">
                         <Field>
                             <FieldLabel htmlFor="name">Full Name</FieldLabel>
                             <Input
@@ -131,24 +134,22 @@ const RegisterPage: FC = () => {
                             {errors.confirm_password && <FieldError>{errors.confirm_password.message}</FieldError>}
                         </Field>
 
-                        <FieldGroup>
-                            <Field className="flex flex-col gap-2">
-                                <Button type="submit" disabled={isPending}>
-                                    {
-                                        isPending ?
-                                            <><Spinner /> Cadastrando</> :
-                                            <>Cadastrar</>
-                                    }
-                                </Button>
 
-                                <FieldDescription className="px-6 text-center">
-                                    Already have an account?{" "}
-                                    <Link to="/login" className="underline">
-                                        Sign in
-                                    </Link>
-                                </FieldDescription>
-                            </Field>
-                        </FieldGroup>
+                        <Field className="mt-6">
+                            <Button type="submit" disabled={isPending}>
+                                {
+                                    isPending ?
+                                        <><Spinner /> Cadastrando</> :
+                                        <>Cadastrar</>
+                                }
+                            </Button>
+                            <FieldDescription className="text-center">
+                                Already have an account?{" "}
+                                <Link to="/login" className="underline">
+                                    Sign in
+                                </Link>
+                            </FieldDescription>
+                        </Field>
                     </FieldGroup>
                 </form>
             </CardContent>

@@ -22,7 +22,7 @@ import {
     CardHeader,
     CardTitle
 } from '@/components/ui/card';
-import { useDialog } from '@/hooks/context/useDialogContext';
+import { useDialogContext } from '@/hooks/context/useDialogContext';
 import {
     type Appointment,
     type AppointmentStatus
@@ -33,7 +33,7 @@ import Badge from '@/components/ui/badge';
 
 const AgendaPage = () => {
     const { setPageTitle, setPageDescription } = useHeaderContext();
-    const { openDialog } = useDialog();
+    const { openDialog } = useDialogContext();
 
     const [date, setDate] = useState<Date | undefined>(new Date());
     const [month, setMonth] = useState<Date | undefined>(new Date());
