@@ -1,4 +1,4 @@
-import type { BasePayload, RouteParams, TPicture } from "./api";
+import type { TPicture } from "./api";
 
 export interface Clinic {
     id: string;

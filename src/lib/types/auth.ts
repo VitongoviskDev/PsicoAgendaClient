@@ -1,6 +1,6 @@
-import type { User } from "./user";
-import type { BaseCustomError, BasePayload, BaseResponse, TErrorField } from "./api";
+import type { BaseCustomError, BaseResponse, TErrorField } from "./api";
 import type { Clinic } from "./clinic";
+import type { User } from "./user";
 
 //---------- PAYLOADS --------------------------------------------------
 // LOGIN

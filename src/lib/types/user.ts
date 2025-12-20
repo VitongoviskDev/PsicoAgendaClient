@@ -15,6 +15,7 @@ export interface User {
     cpf?: string;
     crp?: string;
     status: UserStatus;
+    profile_picture?: string;
     profiles?: {
         staff: StaffProfile | null,
         psychologist: PsychologistProfile | null,

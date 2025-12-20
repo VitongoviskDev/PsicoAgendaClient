@@ -1,7 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { useClinicContext } from '@/hooks/context/useClinicContext';
 import { useStepperContext } from '@/hooks/context/useStepperContext';
-import type { Clinic } from '@/lib/types/clinic';
 
 const CompleteRegistrationStepTeam = () => {
     const { completeStep } = useStepperContext();

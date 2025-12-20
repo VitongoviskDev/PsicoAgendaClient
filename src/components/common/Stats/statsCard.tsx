@@ -1,6 +1,5 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import type { FC } from "react"
+import { Card, CardTitle } from "@/components/ui/card";
+import type { FC } from "react";
 import type { IconType } from "react-icons/lib";
 import { LuTrendingDown, LuTrendingUp } from "react-icons/lu";
 import { Link } from "react-router-dom";

@@ -1,15 +1,12 @@
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import Badge from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { usePatientContext } from '@/hooks/context/usePatientContext';
 import { cn, getInitials, type DefaultInterface } from '@/lib/utils';
 import type { FC } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import AutoHeightContainer from '../../autoHeightContainer';
-import AddPatientDialog from '../../Modal/AddPatientDialog';
-import { useDialogContext } from '@/hooks/context/useDialogContext';
 
 interface PatientProfileCardProps extends DefaultInterface {
 

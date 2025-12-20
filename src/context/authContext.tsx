@@ -8,7 +8,6 @@ import { useUpdateUser } from "@/hooks/user/useUpdateUser";
 import { AuthService } from "@/lib/services/auth.service";
 
 import type {
-    CompleteRegistrationPayload,
     ForgotPasswordPayload,
     LoginCustomError,
     LoginPayload,
@@ -17,12 +16,12 @@ import type {
 } from "@/lib/types/auth";
 
 import { useRegisterOwner } from "@/hooks/auth/useRegister";
+import { useCompleteOwnerProfile } from "@/hooks/user/useCompleteOwnerProfile";
 import { emit } from "@/lib/eventBus";
 import type {
     CompleteOwnerProfileCustomError,
     CompleteOwnerProfilePayload,
     CompleteOwnerProfileResponse,
-    UpdateUserCustomError,
     UpdateUserPayload,
     UpdateUserResponse,
     User
@@ -30,7 +29,6 @@ import type {
 import { createContext, useState, type ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { useCompleteOwnerProfile } from "@/hooks/user/useCompleteOwnerProfile";
 
 interface AuthContextType {
     user: User | null;

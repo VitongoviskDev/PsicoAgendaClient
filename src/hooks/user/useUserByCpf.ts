@@ -1,6 +1,6 @@
 import { queryClient } from "@/lib/apis/queryClient";
 import { UserService } from "@/lib/services/user.service";
-import type { PatientByCpfResponse, UpdateUserCustomError, UpdateUserPayload, UpdateUserResponse } from "@/lib/types/user";
+import type { PatientByCpfResponse, UpdateUserCustomError, UpdateUserPayload } from "@/lib/types/user";
 import { useMutation } from "@tanstack/react-query";
 
 export function useUpdateUser() {

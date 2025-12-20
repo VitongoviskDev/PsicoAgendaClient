@@ -1,31 +1,27 @@
-import { AxiosError } from "axios";
 import { AuthAPI } from "@/lib/apis/auth.api";
 import type {
-    LoginPayload,
-    RegisterPayload,
-    ForgotPasswordPayload,
-    ResendVerificationEmailPayload,
-    LoginResponse,
-    RegisterOwnerResponse,
-    ForgotPasswordReseponse,
-    MeResponse,
-    LoginCustomError,
-    RegisterCustomError,
-    MeCustomError,
-    LogoutCustomErrror,
-    ForgotPasswordCustomError,
-    ResendVerificationEmailResponse,
-    ResendVerificationEmailCustomError,
-    LogoutResposne,
-    MePayload,
+    ChangePasswordCustomError,
     ChangePasswordPayload,
     ChangePasswordResponse,
-    ChangePasswordCustomError,
-    CompleteRegistrationPayload,
-    CompleteRegistrationResponse,
-    CompleteRegistrationCustomError,
+    ForgotPasswordCustomError,
+    ForgotPasswordPayload,
+    ForgotPasswordReseponse,
+    LoginCustomError,
+    LoginPayload,
+    LoginResponse,
+    LogoutCustomErrror,
+    LogoutResposne,
+    MeCustomError,
+    MePayload,
+    MeResponse,
+    RegisterCustomError,
     RegisterOwnerPayload,
+    RegisterOwnerResponse,
+    ResendVerificationEmailCustomError,
+    ResendVerificationEmailPayload,
+    ResendVerificationEmailResponse
 } from "@/lib/types/auth";
+import { AxiosError } from "axios";
 
 export const AuthService = {
     async registerOwner(payload: RegisterOwnerPayload): Promise<RegisterOwnerResponse> {

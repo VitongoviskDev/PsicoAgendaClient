@@ -1,5 +1,4 @@
 import * as React from "react"
-import { type LucideIcon } from "lucide-react"
 
 import {
   SidebarGroup,
@@ -8,8 +7,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { Link } from "react-router-dom"
 import type { IconType } from "react-icons/lib"
+import { Link } from "react-router-dom"
 
 export interface NavSecondaryItem {
   title: string

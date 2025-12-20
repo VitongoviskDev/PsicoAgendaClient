@@ -27,7 +27,7 @@ export function PatientProvider({ children }: { children: ReactNode }) {
         localStorage.setItem("patient-context", JSON.stringify(patient));
     }
 
-    const getPatientByCPF = (payload: PatientByCpfPayload) => {
+    const getPatientByCPF = () => {
         try {
             return null
         } catch (err) {

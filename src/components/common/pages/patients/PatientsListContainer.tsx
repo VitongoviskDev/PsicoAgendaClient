@@ -94,6 +94,7 @@ import {
     EmptyMedia,
     EmptyTitle,
 } from "@/components/ui/empty";
+import { useDialogContext } from "@/hooks/context/useDialogContext";
 import { usePatientContext } from "@/hooks/context/usePatientContext";
 import type { Patient } from "@/lib/types/patient";
 import { cn, getInitials, type DefaultInterface } from "@/lib/utils";
@@ -105,10 +106,8 @@ import Badge from "../../../ui/badge";
 import { Card, CardHeader, CardTitle } from "../../../ui/card";
 import { Input } from "../../../ui/input";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../../../ui/select";
-import FilterSection from "../../sections/filterSection";
-import { Dialog } from "@/components/ui/dialog";
 import AddPatientDialog from "../../Modal/AddPatientDialog";
-import { useDialogContext } from "@/hooks/context/useDialogContext";
+import FilterSection from "../../sections/filterSection";
 
 export function EmptyMuted() {
     return (

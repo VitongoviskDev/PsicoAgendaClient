@@ -38,6 +38,7 @@ const CompleteRegistrationStepAddress = () => {
 
     const onAddressFormSubmit = (formData: AddressStepForData) => {
         try {
+            console.log(formData);
             completeStep();
             nextStep();
         } catch {

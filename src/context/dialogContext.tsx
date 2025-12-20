@@ -14,7 +14,7 @@ export interface DiaglogDefault {
 interface DialogContextType {
     activeDialog: DialogKey | null;
     openDialog: (key: DialogKey) => void;
-    closeDialog: (callback?: () => void) => void;
+    closeDialog: () => void;
 }
 
 export const DialogContext = createContext<DialogContextType | undefined>(undefined);

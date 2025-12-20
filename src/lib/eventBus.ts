@@ -26,7 +26,7 @@ export const subscribe = <T = any>(
     subscribers[event].push({ name, callback: cb });
 };
 
-export const unsubscribe = <T = any>(
+export const unsubscribe = (
     event: EventTypes,
     name: string
 ) => {

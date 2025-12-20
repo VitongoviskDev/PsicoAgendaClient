@@ -1,10 +1,6 @@
 import {
-  BadgeCheck,
-  Bell,
   ChevronsUpDown,
-  CreditCard,
-  LogOut,
-  Sparkles,
+  LogOut
 } from "lucide-react"
 
 import {
@@ -27,10 +23,10 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
-import { getInitials } from "@/lib/utils"
-import { Link } from "react-router-dom"
-import type { IconType } from "react-icons/lib"
 import { useAuthContext } from "@/hooks/context/useAuthContext"
+import { getInitials } from "@/lib/utils"
+import type { IconType } from "react-icons/lib"
+import { Link } from "react-router-dom"
 
 export interface NavUserGroup {
   id: string;

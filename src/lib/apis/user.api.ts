@@ -29,7 +29,7 @@ export const UserApi = {
         // return data;
         const form = new FormData();
 
-        form.append('clinic_id', payload.clinic_id);
+        // form.append('clinic_id', payload.clinic_id);
         form.append('cpf', payload.cpf);
         form.append('birthDate', payload.birthDate.toISOString());
         form.append('phone', payload.phone);

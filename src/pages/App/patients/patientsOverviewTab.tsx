@@ -1,10 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
-import { Separator } from "@/components/ui/separator"
 import { usePatientContext } from "@/hooks/context/usePatientContext"
 import { formatedDate } from "@/lib/utils"
 import type { FC } from "react"
-import { LuActivity, LuLocate, LuMail, LuMapPin, LuPhone, LuPointer, LuUser } from "react-icons/lu"
+import { LuActivity, LuMail, LuMapPin, LuPhone, LuUser } from "react-icons/lu"
 
 const PatientsOverviewTab: FC = () => {
     const { selectedPatient } = usePatientContext();

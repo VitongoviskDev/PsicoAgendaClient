@@ -4,14 +4,13 @@ import {
     DialogContent,
     DialogDescription,
     DialogHeader,
-    DialogTitle,
-    DialogTrigger,
+    DialogTitle
 } from "@/components/ui/dialog";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
 import { Spinner } from "@/components/ui/spinner";
@@ -62,7 +61,7 @@ const AddPatientDialog = () => {
     const {
         handleSubmit: handleSubmitCreate,
         register: registerCreate,
-        formState: { errors: createErrors, isSubmitting: isCreatePending },
+        formState: { errors: createErrors },
         reset: resetCreate
     } = useForm<CreatePatientForm>({
         resolver: zodResolver(createPatientSchema),
@@ -87,10 +86,11 @@ const AddPatientDialog = () => {
         setStatus("idle");
         resetCpf()
         resetCreate()
+        closeDialog();
     }
 
     return (
-        <Dialog open={DIALOG_KEY === activeDialog} onOpenChange={() => closeDialog(handleDialogClose)}>
+        <Dialog open={DIALOG_KEY === activeDialog} onOpenChange={handleDialogClose}>
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>Adicionar paciente à agenda</DialogTitle>

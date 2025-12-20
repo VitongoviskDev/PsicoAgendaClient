@@ -9,7 +9,7 @@ import {
   SidebarFooter,
   SidebarHeader
 } from "@/components/ui/sidebar"
-import { LuBadgeCheck, LuCalendar, LuChartColumn, LuCreditCard, LuLayoutDashboard, LuLifeBuoy, LuSend, LuSettings2, LuSparkles, LuUserCog, LuUsers } from "react-icons/lu"
+import { LuBadgeCheck, LuCalendar, LuChartColumn, LuCreditCard, LuLayoutDashboard, LuLifeBuoy, LuSend, LuSettings2, LuSparkles, LuUsers } from "react-icons/lu"
 import TeamSwitcher from "./team-switcher"
 
 

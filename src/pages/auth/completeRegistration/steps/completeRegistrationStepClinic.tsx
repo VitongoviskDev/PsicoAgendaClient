@@ -1,24 +1,23 @@
+import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Field, FieldContent, FieldDescription, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
+import { Field, FieldContent, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Spinner } from '@/components/ui/spinner';
-import { Button } from '@/components/ui/button';
-import { Calendar } from '@/components/ui/calendar';
-import { toast } from 'sonner';
-import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { useClinicContext } from '@/hooks/context/useClinicContext';
-import { useStepperContext } from '@/hooks/context/useStepperContext';
+import { Controller, useFieldArray, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 
-import z from 'zod';
-import { LuChevronDown, LuImage, LuTrash2 } from 'react-icons/lu';
-import { useEffect, useRef, useState } from 'react';
-import { zodResolver } from '@hookform/resolvers/zod';
-import type { CompleteClinicPayload } from '@/lib/types/clinic';
-import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { cn, getInitials } from '@/lib/utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import type { CompleteClinicPayload } from '@/lib/types/clinic';
+import { cn, getInitials } from '@/lib/utils';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect, useRef, useState } from 'react';
+import { LuChevronDown, LuImage, LuTrash2 } from 'react-icons/lu';
+import z from 'zod';
 
 const workingHourSchema = z.object({
     dayOfWeek: z.number().min(0).max(6),
@@ -114,6 +113,8 @@ const CompleteRegistrationStepClinic = () => {
                 // workingHours: formData.workingHours,
             };
 
+            console.log(payload);
+
             // const response = await handleCompleteClinic(payload);
 
             // toast.success(response.message);
@@ -146,7 +147,7 @@ const CompleteRegistrationStepClinic = () => {
                                 type="button"
                                 variant="outline"
                                 className='flex-1'
-                                onClick={() => fileInputRef?.current?.click()}
+                            // onClick={() => fileInputRef?.current?.click()}
                             >
                                 <LuImage className="mr-2" /> Escolher imagem
                             </Button>

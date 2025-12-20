@@ -1,6 +1,5 @@
 "use client"
 
-import { useState, type FC } from "react"
 import { Button } from "@/components/ui/button"
 import {
     Card,
@@ -17,15 +16,15 @@ import {
     FieldLabel,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { Link } from "react-router-dom"
-import { useAuthContext } from "@/hooks/context/useAuthContext"
-import z from "zod"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import type { RegisterCustomError, RegisterOwnerPayload, RegisterPayload } from "@/lib/types/auth"
-import { toast } from "sonner"
 import { Spinner } from "@/components/ui/spinner"
-import { Switch } from "@/components/ui/switch"
+import { useAuthContext } from "@/hooks/context/useAuthContext"
+import type { RegisterCustomError, RegisterOwnerPayload } from "@/lib/types/auth"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { type FC } from "react"
+import { useForm } from "react-hook-form"
+import { Link } from "react-router-dom"
+import { toast } from "sonner"
+import z from "zod"
 
 export const registerSchema = z.object({
     name: z.string().min(3, "Nome deve conter pelo menos 3 caracteres"),
@@ -38,7 +37,7 @@ export type RegisterFormData = z.infer<typeof registerSchema>;
 
 const RegisterPage: FC = () => {
     const { handleRegisterOwner: registerOwner } = useAuthContext();
-    const [psychologist, setPsychologist] = useState<boolean>(false);
+    // const [psychologist, setPsychologist] = useState<boolean>(false);
 
     const {
         register,

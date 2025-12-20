@@ -71,7 +71,7 @@ export const AuthAPI = {
     },
 
     async completeRegistration(payload: CompleteRegistrationPayload): Promise<CompleteRegistrationResponse> {
-        const { data } = await api.post<LoginResponse>(
+        const { data } = await api.post<CompleteRegistrationResponse>(
             "/auth/complete-registration",
             payload,
             {

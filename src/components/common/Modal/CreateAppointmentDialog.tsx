@@ -20,6 +20,7 @@ import { Spinner } from '@/components/ui/spinner'
 import { Textarea } from '@/components/ui/textarea'
 import type { DialogKey } from '@/context/dialogContext'
 import { useDialogContext } from '@/hooks/context/useDialogContext'
+import { formatedHours } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect, useState, type FC } from 'react'
 import { useForm } from 'react-hook-form'
@@ -28,7 +29,6 @@ import {
 } from 'react-icons/lu'
 import { z } from 'zod'
 import { DateTimePickerInput } from '../Inputs/DateTimePicker'
-import { formatedHours } from '@/lib/utils'
 
 const knowledgeBaseSchema = z.object({
   name: z.string().min(1, "Campo nome é obrigatório"),
@@ -55,7 +55,7 @@ const CreateAppointmentDialog: FC<CreateCategoryModalProps> = ({ dialogKey, date
     register,
     handleSubmit,
     formState: { errors, isSubmitting: isPending },
-    setError,
+    // setError,
     reset
   } = useForm<CreateCategoryFormData>({
     resolver: zodResolver(knowledgeBaseSchema),
@@ -77,7 +77,7 @@ const CreateAppointmentDialog: FC<CreateCategoryModalProps> = ({ dialogKey, date
     setSelectedDate(date);
   }, [date])
 
-  const CreateAppointment = async (data: CreateCategoryFormData) => {
+  const CreateAppointment = async () => {
     // try {
     //   const payload: CreateCategoryPayload = {
     //     title: data.name,

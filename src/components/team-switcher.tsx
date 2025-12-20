@@ -1,7 +1,6 @@
 "use client"
 
 import { ChevronsUpDown, Plus } from "lucide-react"
-import * as React from "react"
 
 import {
     DropdownMenu,
@@ -18,11 +17,11 @@ import {
     SidebarMenuItem,
     useSidebar,
 } from "@/components/ui/sidebar"
+import { useClinicContext } from "@/hooks/context/useClinicContext"
 import { getInitials } from "@/lib/utils"
 import type { FC } from "react"
 import { LuSettings2 } from "react-icons/lu"
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
-import { useClinicContext } from "@/hooks/context/useClinicContext"
+import { Avatar, AvatarFallback } from "./ui/avatar"
 
 
 const TeamSwitcher: FC = () => {
