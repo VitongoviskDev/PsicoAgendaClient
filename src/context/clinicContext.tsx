@@ -1,14 +1,14 @@
+import { useCompleteClinic } from "@/hooks/clinic/useCompleteClinic";
 import { subscribe, unsubscribe } from "@/lib/eventBus";
 
-import type { Clinic } from "@/lib/types/clinic";
+import type { Clinic, CompleteClinicPayload, CompleteClinicResponse } from "@/lib/types/clinic";
 import { createContext, useEffect, useState, type ReactNode } from "react";
 
 interface ClinicContextType {
     currentClinic: Clinic | null;
-    updateCurrentClinic: (clinic: Clinic) => void
+    handleCompleteClinic: (payload: CompleteClinicPayload) => Promise<CompleteClinicResponse>;
 
     clinics: Clinic[];
-    updateClinics: (clinics: Clinic[]) => void
 }
 
 export const ClinicContext = createContext<ClinicContextType | undefined>(undefined);
@@ -23,43 +23,51 @@ export function ClinicProvider({ children }: { children: ReactNode }) {
         return !!storedClinic ? (JSON.parse(storedClinic) as Clinic[]) : [];
     });
 
+    // HOOKS
+    const completeClinicMutation = useCompleteClinic();
+
+    // EVENTS
     useEffect(() => {
         subscribe("login", "ClinicContext", ({ clinic, clinics }) => {
-            updateCurrentClinic(clinic);
-            updateClinics(clinics);
+
+            setCurrentClinic(clinic);
+            localStorage.setItem("clinic-context-current", JSON.stringify(clinic))
+
+            setClinics(clinics);
+            localStorage.setItem("clinic-context-all", JSON.stringify(clinics))
         });
 
         subscribe("logout", "ClinicContext", ({ }) => {
             clearSessionData();
         });
 
-        return () => unsubscribe("login", "ClinicContext");
+        return () => {
+            unsubscribe("login", "ClinicContext");
+            unsubscribe("logout", "ClinicContext");
+        };
     }, []);
 
-    const updateCurrentClinic = (clinic: Clinic) => {
-        setCurrentClinic(clinic);
-        localStorage.setItem("clinic-context-current", JSON.stringify(clinic))
-    }
-    const updateClinics = (clinics: Clinic[]) => {
-        setClinics(clinics);
-        localStorage.setItem("clinic-context-all", JSON.stringify(clinics))
-    }
-
     const clearSessionData = () => {
-        alert("cleaning clinic context");
         localStorage.removeItem("clinic-context-current")
         localStorage.removeItem("clinic-context-all")
     }
 
+    const handleCompleteClinic = async (payload: CompleteClinicPayload) => {
+
+        const response = await completeClinicMutation.mutateAsync(payload);
+
+        setCurrentClinic(response.data.clinic);
+        localStorage.setItem("clinic-context-current", JSON.stringify(response.data.clinic))
+        return response;
+    }
 
     return (
         <ClinicContext.Provider
             value={{
                 currentClinic,
-                updateCurrentClinic,
-
                 clinics,
-                updateClinics
+
+                handleCompleteClinic,
             }}
         >
             {children}

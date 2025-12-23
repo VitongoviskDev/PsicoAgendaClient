@@ -58,11 +58,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const isAuthenticated = !!user && !!token;
 
     const navigate = useNavigate();
-
-    // const { changeCurrentEnterprise } = useEnterprise();
-    // const { setPreferences } = usePreference();
-    // const { setRole } = useRoleContext();
-
     const loginMutation = useLogin();
     const registerOwnerMutation = useRegisterOwner();
     const completeOwnerProfileMutation = useCompleteOwnerProfile();

@@ -1,11 +1,12 @@
-import type { TPicture } from "./api";
+import type { BaseCustomError, BaseResponse, TErrorField, TPicture } from "./api";
 
 export interface Clinic {
     id: string;
     name: string;
     description?: string;
     status: ClinicStatus;
-    openedAt?: Date;
+    openedAt: Date;
+    workingHours: WorkingHours
 }
 
 export const ClinicStatus = {
@@ -20,12 +21,20 @@ export interface WorkingHours {
     dayOfWeek: number;
     openAt: string;
     closeAt: string;
-}[];
+};
 
 export interface CompleteClinicPayload {
-    name: string,
-    description?: string,
-    openedAt?: Date,
-    profilePicture?: TPicture,
-    workingHours?: WorkingHours,
+    name: string;
+    description?: string;
+    openedAt: Date;
+    workingHours: WorkingHours[];
+    picture?: TPicture;
 }
+
+export interface CompleteClinicResponse extends BaseResponse<{
+    clinic: Clinic;
+}> { }
+
+export interface CompleteClinicCustomError extends BaseCustomError<{
+    errors: TErrorField<"name" | "description" | "status" | "openedAt">[];
+}> { }

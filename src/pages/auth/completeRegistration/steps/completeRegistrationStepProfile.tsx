@@ -217,7 +217,6 @@ const CompleteRegistrationStepProfile = () => {
                                 type="text"
                                 {...register("phone")}
                                 onChange={(e) => {
-                                    alert(e.target.value)
                                     const formatted = formatPhone(e.target.value);
                                     setValue("phone", formatted, { shouldDirty: true });
                                 }}

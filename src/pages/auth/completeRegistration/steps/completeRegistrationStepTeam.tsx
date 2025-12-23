@@ -6,7 +6,6 @@ const CompleteRegistrationStepTeam = () => {
     const hadleCompleteStep = () => {
         localStorage.setItem("complete-registration-step:team", "true")
         completeStep();
-        alert("all done")
     }
     return (
         <div>

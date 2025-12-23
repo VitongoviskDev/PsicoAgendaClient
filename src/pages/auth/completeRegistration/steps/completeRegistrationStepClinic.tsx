@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Field, FieldContent, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
+import { Field, FieldContent, FieldError, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Spinner } from '@/components/ui/spinner';
@@ -12,11 +12,12 @@ import { toast } from 'sonner';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { useStepperContext } from '@/hooks/context/useStepperContext';
 import type { CompleteClinicPayload } from '@/lib/types/clinic';
-import { cn, getInitials } from '@/lib/utils';
+import { getInitials } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useRef, useState } from 'react';
-import { LuChevronDown, LuImage, LuTrash2 } from 'react-icons/lu';
+import { LuChevronDown, LuPencil, LuTrash2 } from 'react-icons/lu';
 import z from 'zod';
 
 const workingHourSchema = z.object({
@@ -27,7 +28,7 @@ const workingHourSchema = z.object({
 export const clinicStepFormSchema = z.object({
     name: z.string().min(3, 'Nome da clínica é obrigatório'),
     description: z.string().optional(),
-    openedAt: z.date().optional(),
+    openedAt: z.date(),
     profilePicture: z.instanceof(File).optional(),
     workingHours: z.array(workingHourSchema).max(7),
 });
@@ -60,11 +61,11 @@ const presets = {
 
 
 const CompleteRegistrationStepClinic = () => {
-    const { currentClinic } = useClinicContext();
-    // const { completeStep, nextStep } = useStepperContext();
+    const { currentClinic, handleCompleteClinic } = useClinicContext();
+    const { completeStep, nextStep } = useStepperContext();
 
     const [previewImage, setPreviewImage] = useState<string>();
-    const fileInputRef = useRef(null);
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
 
     const {
         handleSubmit,
@@ -109,17 +110,17 @@ const CompleteRegistrationStepClinic = () => {
                 name: formData.name,
                 description: formData.description,
                 openedAt: formData.openedAt,
-                profilePicture: formData.profilePicture,
-                // workingHours: formData.workingHours,
+                picture: formData.profilePicture,
+                workingHours: formData.workingHours
             };
 
             console.log(payload);
 
-            // const response = await handleCompleteClinic(payload);
+            const response = await handleCompleteClinic(payload);
 
-            // toast.success(response.message);
-            // completeStep();
-            // nextStep();
+            toast.success(response.message);
+            completeStep();
+            nextStep();
         } catch (err: any) {
             toast.error(err.message ?? 'Erro ao salvar clínica');
         }
@@ -135,36 +136,47 @@ const CompleteRegistrationStepClinic = () => {
             </CardHeader>
 
             <CardContent>
-                <form onSubmit={handleSubmit(onSubmit)} className='grid md:grid-cols-7 gap-4'>
-                    <FieldGroup className="row-span-2 col-span-2 flex items-start justify-between gap-0">
-                        <Avatar className="size-22">
-                            <AvatarImage src={previewImage ?? undefined} />
-                            <AvatarFallback>{getInitials(watchedValues?.name ?? '')}</AvatarFallback>
-                        </Avatar>
-
-                        <div className="flex items-center gap-2 w-full">
-                            <Button
-                                type="button"
-                                variant="outline"
-                                className='flex-1'
-                            // onClick={() => fileInputRef?.current?.click()}
-                            >
-                                <LuImage className="mr-2" /> Escolher imagem
-                            </Button>
-
-                            <Button
-                                type="button"
-                                variant="outline"
-                                disabled={!previewImage}
-                                onClick={() => {
-                                    setValue('profilePicture', undefined, { shouldDirty: true });
-                                    setPreviewImage(undefined);
-                                }}
-                                className={cn("px-0! aspect-square", previewImage && "text-destructive border-destructive")}
-                            >
-                                <LuTrash2 />
-                            </Button>
+                <form onSubmit={handleSubmit(onSubmit)} className='grid md:grid-cols-3 gap-4'>
+                    <Field className='col-span-1 row-span-2 flex flex-col justify-end items-cente'>
+                        <div
+                            className='relative size-22! flex items-center justify-center group aspect-square! overflow-hidden rounded-full cursor-pointer'
+                            onClick={() => fileInputRef?.current?.click()}
+                        >
+                            <div
+                                className='
+                                    absolute inset-0 z-1
+                                    flex items-center justify-center
+                                    bg-zinc-900/50 opacity-0
+                                    group-hover:opacity-100
+                                    transition-all duration-300'>
+                                <LuPencil
+                                    className='text-white text-2xl'
+                                />
+                            </div>
+                            <Avatar className="size-full object-fit cursor-pointer">
+                                <AvatarImage src={previewImage ?? undefined} />
+                                {
+                                    !!watchedValues.name ? (
+                                        <AvatarFallback>{getInitials(watchedValues.name)}</AvatarFallback>
+                                    ) : (
+                                        <AvatarFallback className='text-3xl'>#</AvatarFallback>
+                                    )
+                                }
+                            </Avatar>
                         </div>
+
+                        <Button
+                            type="button"
+                            variant="outline"
+                            disabled={!previewImage}
+                            onClick={() => {
+                                setValue('profilePicture', undefined, { shouldDirty: true });
+                                setPreviewImage(undefined);
+                            }}
+                            className={`w-full`}
+                        >
+                            <LuTrash2 /> Remover Imagem
+                        </Button>
 
                         <input
                             ref={fileInputRef}
@@ -179,18 +191,15 @@ const CompleteRegistrationStepClinic = () => {
                                 setPreviewImage(URL.createObjectURL(file));
                             }}
                         />
-                    </FieldGroup>
+                    </Field>
 
-                    <FieldGroup className="col-span-5">
-                        <Field className="">
-                            <FieldLabel>Nome da clínica</FieldLabel>
-                            <Input {...register('name')} />
-                            <FieldError>{errors.name?.message}</FieldError>
-                        </Field>
-                    </FieldGroup>
+                    <Field className="col-span-2 min-w-0!">
+                        <FieldLabel>Nome da clínica</FieldLabel>
+                        <Input {...register('name')} />
+                        <FieldError>{errors.name?.message}</FieldError>
+                    </Field>
 
-                    {/* DATA DE ABERTURA */}
-                    <Field className="col-span-5">
+                    <Field className="col-span-2">
                         <FieldLabel>Data de abertura</FieldLabel>
 
                         <Controller
@@ -214,6 +223,7 @@ const CompleteRegistrationStepClinic = () => {
                                         <Calendar
                                             mode="single"
                                             selected={field.value}
+                                            captionLayout="dropdown"
                                             onSelect={field.onChange}
                                             disabled={(day) => day > new Date()}
                                         />
@@ -343,24 +353,25 @@ const CompleteRegistrationStepClinic = () => {
                         </FieldContent>
                     </Field>
 
-
-                    <Button
-                        type="submit"
-                        disabled={isPending}
-                        className="col-span-full"
-                    >
-                        {isPending ? (
-                            <>
-                                <Spinner />{' '}
-                                {isCompleted ? 'Atualizando' : 'Salvando'}
-                            </>
-                        ) : (
-                            <>{isCompleted ? 'Atualizar' : 'Continuar'}</>
-                        )}
-                    </Button>
+                    <Field>
+                        <Button
+                            type="submit"
+                            disabled={isPending}
+                            className="col-span-full"
+                        >
+                            {isPending ? (
+                                <>
+                                    <Spinner />{' '}
+                                    {isCompleted ? 'Atualizando' : 'Salvando'}
+                                </>
+                            ) : (
+                                <>{isCompleted ? 'Atualizar' : 'Continuar'}</>
+                            )}
+                        </Button>
+                    </Field>
                 </form>
             </CardContent>
-        </Card>
+        </Card >
     );
 };
 
