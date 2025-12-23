@@ -1,12 +1,15 @@
 import { useCompleteClinic } from "@/hooks/clinic/useCompleteClinic";
 import { subscribe, unsubscribe } from "@/lib/eventBus";
 
-import type { Clinic, CompleteClinicPayload, CompleteClinicResponse } from "@/lib/types/clinic";
+import type { Clinic, CompleteClinicPayload, CompleteClinicResponse, SwitchClinicPayload } from "@/lib/types/clinic";
 import { createContext, useEffect, useState, type ReactNode } from "react";
+import { set } from "zod";
 
 interface ClinicContextType {
     currentClinic: Clinic | null;
     handleCompleteClinic: (payload: CompleteClinicPayload) => Promise<CompleteClinicResponse>;
+
+    handleSwitchClinic: (clinic: Clinic) => Promise<void>;
 
     clinics: Clinic[];
 }
@@ -61,6 +64,15 @@ export function ClinicProvider({ children }: { children: ReactNode }) {
         return response;
     }
 
+    const handleSwitchClinic = async (clinic: Clinic) => {
+        try {
+            // const response = await switchClinicMutation.mutateAsync(payload);
+            setCurrentClinic(clinic);
+        } catch (error) {
+
+        }
+    }
+
     return (
         <ClinicContext.Provider
             value={{
@@ -68,6 +80,7 @@ export function ClinicProvider({ children }: { children: ReactNode }) {
                 clinics,
 
                 handleCompleteClinic,
+                handleSwitchClinic,
             }}
         >
             {children}

@@ -26,7 +26,7 @@ import { Avatar, AvatarFallback } from "./ui/avatar"
 
 const TeamSwitcher: FC = () => {
     const { isMobile } = useSidebar()
-    const { currentClinic, clinics, updateCurrentClinic } = useClinicContext();
+    const { currentClinic, clinics, handleSwitchClinic } = useClinicContext();
 
     return (
         currentClinic &&
@@ -68,7 +68,7 @@ const TeamSwitcher: FC = () => {
                         {clinics.map((cli, index) => (
                             <DropdownMenuItem
                                 key={cli.name}
-                                onClick={() => updateCurrentClinic(cli)}
+                                onClick={() => handleSwitchClinic(cli)}
                                 className="gap-2 p-2"
                             >
                                 <Avatar className="h-8 w-8 rounded-lg">
