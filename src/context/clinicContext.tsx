@@ -1,9 +1,8 @@
 import { useCompleteClinic } from "@/hooks/clinic/useCompleteClinic";
 import { subscribe, unsubscribe } from "@/lib/eventBus";
 
-import type { Clinic, CompleteClinicPayload, CompleteClinicResponse, SwitchClinicPayload } from "@/lib/types/clinic";
+import type { Clinic, CompleteClinicPayload, CompleteClinicResponse } from "@/lib/types/clinic";
 import { createContext, useEffect, useState, type ReactNode } from "react";
-import { set } from "zod";
 
 interface ClinicContextType {
     currentClinic: Clinic | null;
