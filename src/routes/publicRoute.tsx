@@ -2,7 +2,7 @@ import { useAuthContext } from "@/hooks/context/useAuthContext";
 import type { FC } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 
-const AuthLayout: FC = () => {
+const PublicRoute: FC = () => {
     const { isAuthenticated } = useAuthContext();
 
     if (isAuthenticated) {
@@ -12,4 +12,4 @@ const AuthLayout: FC = () => {
     return <Outlet />
 }
 
-export default AuthLayout
+export default PublicRoute

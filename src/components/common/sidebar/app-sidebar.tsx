@@ -1,15 +1,15 @@
 "use client"
 
-import { NavMain, type NavMainItem } from "@/components/nav-main"
-import { NavSecondary, type NavSecondaryItem } from "@/components/nav-secondary"
-import { NavUser, type NavUserGroup } from "@/components/nav-user"
+import { NavMain, type NavMainItem } from "@/components/common/sidebar/nav-main"
+import { NavSecondary, type NavSecondaryItem } from "@/components/common/sidebar/nav-secondary"
+import { NavUser, type NavUserGroup } from "@/components/common/sidebar/nav-user"
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader
 } from "@/components/ui/sidebar"
-import { LuBadgeCheck, LuCalendar, LuChartColumn, LuCreditCard, LuLayoutDashboard, LuLifeBuoy, LuSend, LuSettings2, LuSparkles, LuUsers } from "react-icons/lu"
+import { LuBadgeCheck, LuBell, LuCalendar, LuChartColumn, LuCreditCard, LuLayoutDashboard, LuLifeBuoy, LuSend, LuSparkles, LuUsers } from "react-icons/lu"
 import TeamSwitcher from "./team-switcher"
 
 
@@ -33,19 +33,19 @@ const data: Nav = {
       icon: LuCalendar,
     },
     {
-      title: "Patients",
+      title: "Pacientes",
       url: "/patients",
       icon: LuUsers,
     },
     {
-      title: "Settings",
-      icon: LuSettings2,
+      title: "Administrativo",
+      icon: LuChartColumn,
       url: "#"
     },
     {
-      title: "Administration",
-      icon: LuChartColumn,
-      url: "#"
+      title: "Notificações",
+      icon: LuBell,
+      url: "/notifications"
     },
   ],
   navSecondary: [

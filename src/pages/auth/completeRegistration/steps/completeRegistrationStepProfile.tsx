@@ -9,6 +9,7 @@ import { Switch } from '@/components/ui/switch';
 import { useAuthContext } from '@/hooks/context/useAuthContext';
 import { useStepperContext } from '@/hooks/context/useStepperContext';
 import type { CompleteOwnerProfilePayload, UpdateUserCustomError } from '@/lib/types/user';
+import { TypeFormatter } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ChevronDownIcon } from 'lucide-react';
 import { useEffect } from 'react';
@@ -49,11 +50,11 @@ const CompleteRegistrationStepProfile = () => {
         if (!user) return;
 
         reset({
-            cpf: formatCpf(user.cpf ?? ''),
+            cpf: TypeFormatter.toCpf(user.cpf ?? ''),
             birthDate: user.birthDate ? new Date(user.birthDate) : undefined,
             actAsPsychologist: !!user.profiles?.psychologist,
-            crp: formatCrp(user.profiles?.psychologist?.crp ?? ''),
-            phone: formatPhone(user.phone ?? ''),
+            crp: TypeFormatter.toCrp(user.profiles?.psychologist?.crp ?? ''),
+            phone: TypeFormatter.toPhone(user.phone ?? ''),
         });
     }, [user, reset]);
 
@@ -79,7 +80,7 @@ const CompleteRegistrationStepProfile = () => {
             const errors = customError.error?.errors
             if (errors) {
                 errors.map(err => {
-                    setError(err.field, { type: "manual", message: err.errors[0] })
+                    setError(err.field, { type: "manual", message: err.error })
                 })
                 return;
             }
@@ -88,52 +89,7 @@ const CompleteRegistrationStepProfile = () => {
         }
     }
 
-    const formatCpf = (value: string) => {
-        return value
-            .replace(/\D/g, '')
-            .substring(0, 11)
-            .replace(/(\d{3})(\d)/, '$1.$2')
-            .replace(/(\d{3})(\d)/, '$1.$2')
-            .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
-    }
 
-    const formatPhone = (value: string) => {
-        const numbers = value.replace(/\D/g, '').substring(0, 11);
-
-        if (numbers.length <= 2) {
-            return numbers;
-        }
-
-        if (numbers.length <= 6) {
-            return numbers.replace(/(\d{2})(\d+)/, '($1) $2');
-        }
-
-        if (numbers.length <= 10) {
-            return numbers.replace(
-                /(\d{2})(\d{4})(\d+)/,
-                '($1) $2-$3'
-            );
-        }
-
-        return numbers.replace(
-            /(\d{2})(\d{5})(\d{4})/,
-            '($1) $2-$3'
-        );
-    };
-
-
-    const formatCrp = (value: string) => {
-        const numbers = value.replace(/\D/g, '').substring(0, 7);
-
-        if (numbers.length <= 2) {
-            return numbers;
-        }
-
-        return numbers.replace(
-            /(\d{2})(\d+)/,
-            '$1/$2'
-        );
-    };
 
     return (
         <Card className='w-full'>
@@ -154,7 +110,7 @@ const CompleteRegistrationStepProfile = () => {
                                 type="text"
                                 {...register("cpf", {
                                     onChange: (e) => {
-                                        const formatted = formatCpf(e.target.value);
+                                        const formatted = TypeFormatter.toCpf(e.target.value);
                                         setValue("cpf", formatted, { shouldDirty: true });
                                     },
                                 })}
@@ -217,7 +173,7 @@ const CompleteRegistrationStepProfile = () => {
                                 type="text"
                                 {...register("phone")}
                                 onChange={(e) => {
-                                    const formatted = formatPhone(e.target.value);
+                                    const formatted = TypeFormatter.toPhone(e.target.value);
                                     setValue("phone", formatted, { shouldDirty: true });
                                 }}
                                 placeholder="(00) 00000-0000"
@@ -247,11 +203,11 @@ const CompleteRegistrationStepProfile = () => {
                             <Field className="col-span-2">
                                 <FieldLabel>CRP</FieldLabel>
                                 <Input
-                                    id="cpf"
+                                    id="crp"
                                     type="text"
                                     {...register("crp", {
                                         onChange: (e) => {
-                                            const formatted = formatCrp(e.target.value);
+                                            const formatted = TypeFormatter.toCrp(e.target.value);
                                             setValue("crp", formatted, { shouldDirty: true });
                                         },
                                     })}

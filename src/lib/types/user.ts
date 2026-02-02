@@ -1,6 +1,5 @@
 import type {
     BaseCustomError,
-    BasePayload,
     BaseResponse,
     TErrorField,
     TPicture
@@ -13,8 +12,8 @@ export interface User {
     phone?: string;
     birthDate?: Date;
     cpf?: string;
-    crp?: string;
     status: UserStatus;
+    lastClinicId?: string | null;
     profile_picture?: string;
     profiles?: {
         staff: StaffProfile | null,
@@ -35,11 +34,19 @@ export interface PsychologistProfile {
     specialty: any
 }
 
-export interface PatientProfile { }
+export interface PatientProfile {
+    sessions: number;
+    first_session?: Date;
+    next_session?: Date;
+    status: string
+}
 
 export const UserStatus = {
+    PENDING_EMAIL_VERIFICATION: 'PENDING_EMAIL_VERIFICATION',
     PENDING_REGISTRATION: 'PENDING_REGISTRATION',
     ACTIVE: 'ACTIVE',
+    DISABLED: 'DISABLED',
+    BLOCKED: 'BLOCKED',
 } as const;
 
 export type UserStatus = (typeof UserStatus)[keyof typeof UserStatus];
@@ -50,7 +57,7 @@ export interface UpdateUserResponse extends BaseResponse<{
     user: User;
 }> { }
 
-export interface PatientByCpfResponse extends BaseResponse<{
+export interface UserByCpfResponse extends BaseResponse<{
     user: User;
 }> { }
 
@@ -58,8 +65,18 @@ export interface CompleteOwnerProfileResponse extends BaseResponse<{
     user: User;
 }> { }
 
+//---------- ROUTE PARAMS --------------------------------------------------
+export type UpdateUserRouteParams = {
+    id: string;
+}
+export type UserByCpfRouteParams = {
+    cpf: string;
+}
+//---------- PARAMS --------------------------------------------------
+
 //---------- PAYLOADS --------------------------------------------------
-export interface UpdateUserPayload extends BasePayload {
+export type UpdateUserPayload = {
+    routeParams: UpdateUserRouteParams;
     name?: string;
     email?: string;
     phone?: string;
@@ -67,8 +84,9 @@ export interface UpdateUserPayload extends BasePayload {
     crp?: string | null;
     profile_picture?: TPicture;
 }
-export interface PatientByCpfPayload extends BasePayload {
-    cpf: string
+
+export type UserByCpfPayload = {
+    routeParams: UserByCpfRouteParams
 }
 
 export interface CompleteOwnerProfilePayload {
@@ -85,7 +103,7 @@ export interface UpdateUserCustomError extends BaseCustomError<{
     errors: TErrorField<"cpf" | "birthDate" | "phone" | "crp">[]
 }> { }
 
-export interface PatientByCpfCustomError extends BaseCustomError<{
+export interface UserByCpfCustomError extends BaseCustomError<{
     errors: TErrorField<"cpf">[]
 }> { }
 export interface CompleteOwnerProfileCustomError extends BaseCustomError<{

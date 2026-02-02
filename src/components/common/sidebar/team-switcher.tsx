@@ -21,7 +21,7 @@ import { useClinicContext } from "@/hooks/context/useClinicContext"
 import { getInitials } from "@/lib/utils"
 import type { FC } from "react"
 import { LuSettings2 } from "react-icons/lu"
-import { Avatar, AvatarFallback } from "./ui/avatar"
+import { Avatar, AvatarFallback } from "../../ui/avatar"
 
 
 const TeamSwitcher: FC = () => {

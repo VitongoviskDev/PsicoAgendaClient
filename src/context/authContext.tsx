@@ -9,26 +9,27 @@ import { AuthService } from "@/lib/services/auth.service";
 
 import type {
     ForgotPasswordPayload,
-    LoginCustomError,
+    LoginForbidenError,
     LoginPayload,
     MePayload,
-    RegisterOwnerPayload
 } from "@/lib/types/auth";
 
-import { useRegisterOwner } from "@/hooks/auth/useRegister";
+import { useRegisterUser } from "@/hooks/auth/useRegisterUser";
 import { useCompleteOwnerProfile } from "@/hooks/user/useCompleteOwnerProfile";
 import { emit } from "@/lib/eventBus";
-import type {
-    CompleteOwnerProfileCustomError,
-    CompleteOwnerProfilePayload,
-    CompleteOwnerProfileResponse,
-    UpdateUserPayload,
-    UpdateUserResponse,
-    User
+import {
+    UserStatus,
+    type CompleteOwnerProfileCustomError,
+    type CompleteOwnerProfilePayload,
+    type CompleteOwnerProfileResponse,
+    type UpdateUserPayload,
+    type UpdateUserResponse,
+    type User
 } from "@/lib/types/user";
 import { createContext, useState, type ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import type { RegisterUserPayload } from "@/lib/types/user/register-user";
 
 interface AuthContextType {
     user: User | null;
@@ -37,7 +38,7 @@ interface AuthContextType {
 
     handleLogin: (payload: LoginPayload) => Promise<void>;
     handleLogout: () => void;
-    handleRegisterOwner: (payload: RegisterOwnerPayload) => Promise<void>;
+    handleRegister: (payload: RegisterUserPayload) => Promise<void>;
     recoveryPasswordUser: (payload: ForgotPasswordPayload) => Promise<void>;
     handleGetMe: (payload?: MePayload) => Promise<void>
 
@@ -47,28 +48,28 @@ interface AuthContextType {
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const USER_KEY = "auth_user";
+const ACCESS_TOKEN_KEY = "auth_access_token";
 export function AuthProvider({ children }: { children: ReactNode }) {
 
     const [user, setUser] = useState<User | null>(() => {
-        const storedUser = localStorage.getItem("user");
+        const storedUser = localStorage.getItem(USER_KEY);
         return !!storedUser ? (JSON.parse(storedUser) as User) : null;
     });
-    const [token, setToken] = useState<string | null>(() => localStorage.getItem("token"));
+    const [token, setToken] = useState<string | null>(() => localStorage.getItem(ACCESS_TOKEN_KEY));
 
     const isAuthenticated = !!user && !!token;
 
     const navigate = useNavigate();
     const loginMutation = useLogin();
-    const registerOwnerMutation = useRegisterOwner();
+    const registerOwnerMutation = useRegisterUser();
     const completeOwnerProfileMutation = useCompleteOwnerProfile();
 
     const updateUserMutation = useUpdateUser();
 
-
-
     const clearSessionData = () => {
-        localStorage.removeItem("user");
-        localStorage.removeItem("token");
+        localStorage.removeItem(USER_KEY);
+        localStorage.removeItem(ACCESS_TOKEN_KEY);
 
         setUser(null);
         setToken(null);
@@ -84,8 +85,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             setToken(response.data.access_token);
             localStorage.setItem("token", response.data.access_token);
 
-            // updateCurrentClinic(response.data.clinic)
-            // updateClinics(response.data.clinics)
+            if (response.data.user.status === UserStatus.PENDING_EMAIL_VERIFICATION) {
+                navigate("/email-verification")
+                return;
+            }
 
             emit("login", {
                 clinic: response.data.currentClinic,
@@ -95,17 +98,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             navigate("/")
 
         } catch (err) {
-            console.log("ERROR: ", err)
-            const error = (err as LoginCustomError).error;
-            if (error && error.user) {
-                setUser(error.user);
-                localStorage.setItem("user", JSON.stringify(error.user));
+            console.log("LOGIN ERROR: ", err)
+            const customError = err as LoginForbidenError;
+            console.log("LOGIN CUSTOM ERROR: ", customError)
+
+            if (customError.status === 403) {
+                setUser(customError.error.user)
+                localStorage.setItem(USER_KEY, JSON.stringify(customError.error.user));
+
+                toast.info(customError.message)
+                navigate("/email-verification")
+                return
             }
+
             throw err;
         }
     }
 
-    async function handleRegisterOwner(payload: RegisterOwnerPayload) {
+    async function handleRegister(payload: RegisterUserPayload) {
         try {
             const response = await registerOwnerMutation.mutateAsync(payload);
 
@@ -115,12 +125,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             setToken(response.data.access_token);
             localStorage.setItem("token", response.data.access_token);
 
-            emit("register", {
-                clinic: response.data.currentClinic,
-                clinics: response.data.clinics
-            });
+            navigate("/email-verification")
+            return;
 
-            navigate("/pre-registration")
         } catch (err) {
             throw err;
         }
@@ -201,7 +208,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 isAuthenticated,
                 handleLogin,
                 handleLogout,
-                handleRegisterOwner,
+                handleRegister,
                 recoveryPasswordUser,
                 handleGetMe,
                 handleUpdateUser,

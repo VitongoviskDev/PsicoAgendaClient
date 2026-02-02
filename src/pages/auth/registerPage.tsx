@@ -1,159 +1,138 @@
-"use client"
-
 import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card"
-import {
-    Field,
-    FieldDescription,
-    FieldError,
-    FieldGroup,
-    FieldLabel,
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  FieldSet
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Spinner } from "@/components/ui/spinner"
 import { useAuthContext } from "@/hooks/context/useAuthContext"
-import type { RegisterCustomError, RegisterOwnerPayload } from "@/lib/types/auth"
+import { registerSchema, type RegisterFormData, type RegisterUserCustomError, type RegisterUserPayload } from "@/lib/types/user/register-user"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { type FC } from "react"
 import { useForm } from "react-hook-form"
 import { Link } from "react-router-dom"
 import { toast } from "sonner"
-import z from "zod"
 
-export const registerSchema = z.object({
-    name: z.string().min(3, "Nome deve conter pelo menos 3 caracteres"),
-    email: z.email("Email inválido"),
-    password: z.string().min(3, "Senha deve conter pelo menos 3 caracteres"),
-    confirm_password: z.string().min(3, "Confirmação de senha obrigatório"),
-});
+const RegisterPage = () => {
+  const { handleRegister } = useAuthContext();
 
-export type RegisterFormData = z.infer<typeof registerSchema>;
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting: isPending },
+    setError,
+  } = useForm<RegisterFormData>({
+    resolver: zodResolver(registerSchema),
+  });
 
-const RegisterPage: FC = () => {
-    const { handleRegisterOwner: registerOwner } = useAuthContext();
-    // const [psychologist, setPsychologist] = useState<boolean>(false);
+  const onRegisterFormSubmit = async (formData: RegisterFormData) => {
+    try {
+      const registerPayload: RegisterUserPayload = {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        confirm_password: formData.confirm_password,
+      }
 
-    const {
-        register,
-        handleSubmit,
-        formState: { errors, isSubmitting: isPending },
-        setError,
-    } = useForm<RegisterFormData>({
-        resolver: zodResolver(registerSchema),
-    });
+      await handleRegister(registerPayload);
 
-    const handleRegister = async (formData: RegisterFormData) => {
-        try {
-            const registerPayload: RegisterOwnerPayload = {
-                user: {
-                    name: formData.name,
-                    email: formData.email,
-                    password: formData.password,
-                    confirm_password: formData.confirm_password,
-                }
-            }
+    } catch (err) {
+      const customError = err as RegisterUserCustomError;
+      const errors = customError.error?.errors
+      if (errors) {
+        errors.map(err => {
+          alert
+          setError(err.field, { type: "manual", message: err.error })
+        })
+        return;
+      }
 
-            await registerOwner(registerPayload);
-
-        } catch (err) {
-            const customError = err as RegisterCustomError;
-            const errors = customError.error?.errors
-            if (errors) {
-                errors.map(err => {
-                    setError(err.field, { type: "manual", message: err.errors[0] })
-                })
-                return;
-            }
-
-            toast.error(customError.message);
-        }
+      toast.error(customError.message);
     }
-    return (
-        <Card>
-            <CardHeader>
-                <CardTitle>Create an account</CardTitle>
-                <CardDescription>
-                    Enter your information below to create your account
-                </CardDescription>
-            </CardHeader>
+  }
 
-            <CardContent>
-                <form onSubmit={handleSubmit(handleRegister)}>
-                    <FieldGroup className="gap-2">
-                        <Field>
-                            <FieldLabel htmlFor="name">Full Name</FieldLabel>
-                            <Input
-                                id="name"
-                                type="text"
-                                placeholder="John Doe"
-                                {...register("name")}
-                            />
-                            {errors.name && <FieldError>{errors.name.message}</FieldError>}
-                        </Field>
-
-                        <Field>
-                            <FieldLabel htmlFor="email">Email</FieldLabel>
-                            <Input
-                                id="email"
-                                type="email"
-                                placeholder="m@example.com"
-                                {...register("email")}
-                            />
-                            <FieldDescription>
-                                We&apos;ll use this to contact you. We will not share it.
-                            </FieldDescription>
-                            {errors.email && <FieldError>{errors.email.message}</FieldError>}
-                        </Field>
-
-                        <Field>
-                            <FieldLabel htmlFor="password">Password</FieldLabel>
-                            <Input
-                                id="password"
-                                type="password"
-                                {...register("password")}
-                            />
-                            {errors.password && <FieldError>{errors.password.message}</FieldError>}
-                        </Field>
-
-                        <Field>
-                            <FieldLabel htmlFor="confirm-password">
-                                Confirm Password
-                            </FieldLabel>
-                            <Input
-                                id="confirm-password"
-                                type="password"
-                                {...register("confirm_password")}
-                            />
-                            {errors.confirm_password && <FieldError>{errors.confirm_password.message}</FieldError>}
-                        </Field>
-
-
-                        <Field className="mt-6">
-                            <Button type="submit" disabled={isPending}>
-                                {
-                                    isPending ?
-                                        <><Spinner /> Cadastrando</> :
-                                        <>Cadastrar</>
-                                }
-                            </Button>
-                            <FieldDescription className="text-center">
-                                Already have an account?{" "}
-                                <Link to="/login" className="underline">
-                                    Sign in
-                                </Link>
-                            </FieldDescription>
-                        </Field>
-                    </FieldGroup>
-                </form>
-            </CardContent>
-        </Card>
-    )
+  return (
+    <div className="flex flex-col gap-6">
+      <Card className="overflow-hidden p-0">
+        <CardContent className="grid p-0 md:grid-cols-2">
+          <form onSubmit={handleSubmit(onRegisterFormSubmit)} className="p-6 md:p-8">
+            <FieldGroup>
+              <FieldSet>
+                <div className="flex flex-col items-center gap-2 text-center">
+                  <h1 className="text-2xl font-bold">Create your account</h1>
+                  <p className="text-muted-foreground text-sm text-balance">
+                    Enter your email below to create your account
+                  </p>
+                </div>
+                <Field>
+                  <FieldLabel htmlFor="email">Email</FieldLabel>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="m@example.com"
+                    {...register("email")}
+                  />
+                  {errors.email && <FieldError>{errors.email.message}</FieldError>}
+                </Field>
+                <Field>
+                  <FieldLabel htmlFor="name">Nome Completo</FieldLabel>
+                  <Input
+                    id="name"
+                    type="text"
+                    placeholder="Nome Completo"
+                    {...register("name")}
+                  />
+                  {errors.name && <FieldError>{errors.name.message}</FieldError>}
+                </Field>
+                <Field>
+                  <Field className="grid grid-cols-2 gap-4">
+                    <Field>
+                      <FieldLabel htmlFor="password">Senha</FieldLabel>
+                      <Input id="password" type="password" placeholder="Senha" {...register("password")} />
+                      {errors.password && <FieldError>{errors.password.message}</FieldError>}
+                    </Field>
+                    <Field>
+                      <FieldLabel htmlFor="confirm-password">
+                        Confirmaçã de Senha
+                      </FieldLabel>
+                      <Input id="confirm-password" type="password" placeholder="Confirme a Senha" {...register("confirm_password")} />
+                      {errors.confirm_password && <FieldError>{errors.confirm_password.message}</FieldError>}
+                    </Field>
+                  </Field>
+                </Field>
+                <Field >
+                  <Button type="submit" disabled={isPending}>
+                    {
+                      isPending ?
+                        <><Spinner /> Enviado dados</> :
+                        <>Criar conta</>
+                    }
+                  </Button>
+                </Field>
+                <FieldDescription className="text-center">
+                  Já tem uma conta? <Link to={"/login"}>Entrar</Link>
+                </FieldDescription>
+              </FieldSet>
+            </FieldGroup>
+          </form>
+          <div className="bg-muted relative hidden md:block">
+            <img
+              src="/placeholder.svg"
+              alt="Image"
+              className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+            />
+          </div>
+        </CardContent>
+      </Card>
+      <FieldDescription className="px-6 text-center">
+        Clicando em continuar, você concorda com os nossos <Link to={"#"}>Termos de Serviço</Link> e <Link to={"#"}>Política de Privacidade</Link>F
+      </FieldDescription>
+    </div>
+  )
 }
 
 export default RegisterPage;

@@ -1,7 +1,7 @@
-import type { FC } from "react";
-import { Outlet } from "react-router-dom";
+import type { FC } from 'react';
+import { Outlet } from 'react-router-dom';
 
-const AuthLayout: FC = () => {
+const RegistrationLayout: FC = () => {
 
     return (
         <div className="bg-muted flex min-h-svh flex-col items-center justify-center p-6 md:p-10">
@@ -9,7 +9,7 @@ const AuthLayout: FC = () => {
                 <Outlet />
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default AuthLayout
+export default RegistrationLayout;

@@ -1,7 +1,8 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Label } from "@/components/ui/label"
-import { usePatientContext } from "@/hooks/context/usePatientContext"
-import { formatedDate } from "@/lib/utils"
+
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { usePatientContext } from "@/hooks/context/usePatientContext";
+import { formatedDate } from "@/lib/utils";
 import type { FC } from "react"
 import { LuActivity, LuMail, LuMapPin, LuPhone, LuUser } from "react-icons/lu"
 

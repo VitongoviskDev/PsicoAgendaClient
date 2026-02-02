@@ -2,7 +2,9 @@ import type {
     CompleteOwnerProfilePayload,
     CompleteOwnerProfileResponse,
     UpdateUserPayload,
-    UpdateUserResponse
+    UpdateUserResponse,
+    UserByCpfPayload,
+    UserByCpfResponse
 } from "@/lib/types/user";
 import { api } from "./client";
 
@@ -47,5 +49,9 @@ export const UserApi = {
 
         const { data } = await api.post<CompleteOwnerProfileResponse>(`/users/complete-profile/owner`, form);
         return data;
-    }
-};
+    },
+    async getUserByCpf(payload: UserByCpfPayload): Promise<UserByCpfResponse> {
+        const { data } = await api.get<UserByCpfResponse>(`/users/cpf/${payload.routeParams.cpf}`);
+        return data;
+    },
+}

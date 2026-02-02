@@ -5,7 +5,10 @@ import type {
     CompleteOwnerProfileResponse,
     UpdateUserCustomError,
     UpdateUserPayload,
-    UpdateUserResponse
+    UpdateUserResponse,
+    UserByCpfCustomError,
+    UserByCpfPayload,
+    UserByCpfResponse
 } from "@/lib/types/user";
 import { UserApi } from "@/lib/apis/user.api";
 
@@ -44,4 +47,20 @@ export const UserService = {
             throw customError;
         }
     },
+    async getUserByCpf(payload: UserByCpfPayload): Promise<UserByCpfResponse> {
+        try {
+            return await UserApi.getUserByCpf(payload);
+        } catch (err) {
+            const axiosError = err as AxiosError<any>;
+            const customError: UserByCpfCustomError = {
+                status: axiosError.response?.status || 500,
+                message:
+                    axiosError.response?.data?.message ||
+                    axiosError.message ||
+                    "Erro desconhecido",
+                error: axiosError.response?.data?.error
+            }
+            throw customError;
+        }
+    }
 };

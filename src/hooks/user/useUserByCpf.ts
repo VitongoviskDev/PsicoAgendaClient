@@ -1,13 +1,12 @@
-import { queryClient } from "@/lib/apis/queryClient";
 import { UserService } from "@/lib/services/user.service";
-import type { PatientByCpfResponse, UpdateUserCustomError, UpdateUserPayload } from "@/lib/types/user";
-import { useMutation } from "@tanstack/react-query";
+import type { UserByCpfPayload, UserByCpfResponse } from "@/lib/types/user";
+import { useQuery } from "@tanstack/react-query";
 
-export function useUpdateUser() {
-    return useMutation<PatientByCpfResponse, UpdateUserCustomError, UpdateUserPayload>({
-        mutationFn: UserService.updateUser,
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["invitations"] })
-        }
+
+export function useUserByCpf(payload: UserByCpfPayload) {
+    return useQuery<UserByCpfResponse>({
+        queryKey: ["user-by-cpf", payload.routeParams.cpf],
+        queryFn: () => UserService.getUserByCpf(payload),
+        enabled: payload?.routeParams?.cpf?.length === 11
     });
 }

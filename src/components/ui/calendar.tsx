@@ -8,6 +8,7 @@ import { DayButton, DayPicker, getDefaultClassNames } from "react-day-picker"
 
 import { cn } from "@/lib/utils"
 import { Button, buttonVariants } from "@/components/ui/button"
+import { isSameDay } from "date-fns"
 
 function Calendar({
   className,
@@ -212,7 +213,46 @@ function CalendarDayButton({
   )
 }
 
+export type CalendarDateRulesType = "any-date" | "today-future" | "future-only" | "today-past" | "past-only" | "exclude" | "include" | "custom"
+export interface CalendarDateRules {
+  type: CalendarDateRulesType;
+  dates?: Date[];
+  rule?: (date: Date) => boolean;
+}
+export const normalizeDate = (date: Date) => new Date(date.getFullYear(), date.getMonth(), date.getDate());
 
+const GetDisabledDate = (day: Date, rules: CalendarDateRules) => {
+  console.log(day);
 
+  const today = normalizeDate(new Date());
+  const currentDay = normalizeDate(day);
 
-export { Calendar, CalendarDayButton }
+  if (
+    ((rules.type == "include" || rules.type == "exclude") && (!rules.dates || rules.dates.length === 0)) ||
+    (rules.type == "custom" && !rules.rule)
+  )
+    return true
+
+  switch (rules.type) {
+    case "any-date":
+      return false
+    case "future-only":
+      return currentDay <= today
+    case "today-future":
+      return currentDay < today
+    case "past-only":
+      return currentDay >= today
+    case "today-past":
+      return currentDay > today
+    case "exclude":
+      return rules.dates!.some(d => isSameDay(d, currentDay))
+    case "include":
+      return !rules.dates!.some(d => isSameDay(d, currentDay))
+    case "custom":
+      return !rules.rule!(currentDay);
+    default:
+      return false
+  }
+}
+
+export { Calendar, CalendarDayButton, GetDisabledDate }

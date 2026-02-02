@@ -10,15 +10,11 @@ import {
 } from '@/components/ui/dialog'
 import {
   Field,
-  FieldError,
   FieldGroup,
   FieldLabel,
   FieldSet
 } from '@/components/ui/field'
-import { Input } from '@/components/ui/input'
 import { Spinner } from '@/components/ui/spinner'
-import { Textarea } from '@/components/ui/textarea'
-import type { DialogKey } from '@/context/dialogContext'
 import { useDialogContext } from '@/hooks/context/useDialogContext'
 import { formatedHours } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -28,20 +24,19 @@ import {
   LuCalendarPlus
 } from 'react-icons/lu'
 import { z } from 'zod'
-import { DateTimePickerInput } from '../Inputs/DateTimePicker'
-
-const knowledgeBaseSchema = z.object({
-  name: z.string().min(1, "Campo nome é obrigatório"),
-  description: z.string(),
+import DateTimePickerInput from '../Inputs/DateTimePicker'
+const createAppointmentSchema = z.object({
+  date: z.date()
 })
-type CreateCategoryFormData = z.infer<typeof knowledgeBaseSchema>
+type CreateAppointmentFormData = z.infer<typeof createAppointmentSchema>
 
 interface CreateCategoryModalProps {
-  dialogKey: DialogKey;
   date?: Date;
 }
 
-const CreateAppointmentDialog: FC<CreateCategoryModalProps> = ({ dialogKey, date }) => {
+const DIALOG_KEY = 'agenda-create-appointment'
+
+const CreateAppointmentDialog: FC<CreateCategoryModalProps> = ({ date }) => {
 
   const { activeDialog, closeDialog } = useDialogContext();
 
@@ -52,25 +47,20 @@ const CreateAppointmentDialog: FC<CreateCategoryModalProps> = ({ dialogKey, date
   const [selectedTime, setSelectedTime] = useState(formatedHours(initialDate))
 
   const {
-    register,
     handleSubmit,
-    formState: { errors, isSubmitting: isPending },
-    // setError,
-    reset
-  } = useForm<CreateCategoryFormData>({
-    resolver: zodResolver(knowledgeBaseSchema),
+    formState: { isSubmitting: isPending },
+  } = useForm<CreateAppointmentFormData>({
+    resolver: zodResolver(createAppointmentSchema),
     defaultValues: {
-      name: "",
-      description: ""
+      // description: ""
     },
   })
 
   const closeModal = () => {
     closeDialog();
-    reset({
-      name: "",
-      description: ""
-    });
+    // reset({
+    //   description: ""
+    // });
   }
 
   useEffect(() => {
@@ -104,23 +94,23 @@ const CreateAppointmentDialog: FC<CreateCategoryModalProps> = ({ dialogKey, date
 
   return (
     <form >
-      <Dialog open={activeDialog == dialogKey} onOpenChange={closeDialog}>
+      <Dialog open={activeDialog === DIALOG_KEY} onOpenChange={closeDialog}>
         <DialogContent>
           <DialogHeader className='flex justify-between'>
             <DialogTitle className='flex items-center gap-1'>
               <LuCalendarPlus className='text-lg' />Novo Agendamento
             </DialogTitle>
-            <DialogDescription>Preencha os campos abaixo para agendar um paciente</DialogDescription>
+            <DialogDescription>Preencha os campos abaixo para criar o novo agendamento</DialogDescription>
           </DialogHeader>
 
           {/*  Body */}
           <FieldSet>
             <FieldGroup>
-              <Field className='flex-1'>
+              {/* <Field className='flex-1'>
                 <FieldLabel>Nome</FieldLabel>
                 <Input id="name" {...register("name")} placeholder='Name' />
                 {errors.name && <FieldError>{errors.name.message}</FieldError>}
-              </Field>
+              </Field> */}
               <Field>
                 <FieldLabel htmlFor='type'>Horário</FieldLabel>
                 <DateTimePickerInput
@@ -128,12 +118,10 @@ const CreateAppointmentDialog: FC<CreateCategoryModalProps> = ({ dialogKey, date
                   setDate={setSelectedDate}
                   time={selectedTime}
                   setTime={setSelectedTime}
+                  calendarRules={{
+                    type: "today-future",
+                  }}
                 />
-              </Field>
-              <Field className='flex-1'>
-                <FieldLabel>Descrição</FieldLabel>
-                <Textarea id="description" {...register("description")} placeholder='Write a description for this category' className='max-h-16' />
-                {errors.description && <FieldError>{errors.description.message}</FieldError>}
               </Field>
             </FieldGroup>
           </FieldSet>

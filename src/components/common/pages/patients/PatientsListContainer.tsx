@@ -15,7 +15,6 @@ const PatientsListContainer: FC<PatientsListContainerProps> = ({ patients, class
     const { openDialog } = useDialogContext();
     return (
         <Card className={cn("flex flex-col gap-4 p-4", className)}>
-            <AddPatientDialog />
             <CardHeader className="p-0 flex items-center justify-between">
                 <CardTitle className="flex gap-2"><LuUsers />Pacientes</CardTitle>
                 <Button onClick={() => openDialog("patients-create-patient")}><LuUserPlus />Paciente</Button>
@@ -106,7 +105,6 @@ import Badge from "../../../ui/badge";
 import { Card, CardHeader, CardTitle } from "../../../ui/card";
 import { Input } from "../../../ui/input";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../../../ui/select";
-import AddPatientDialog from "../../Modal/AddPatientDialog";
 import FilterSection from "../../sections/filterSection";
 
 export function EmptyMuted() {

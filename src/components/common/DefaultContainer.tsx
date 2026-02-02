@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import type { FC } from "react"
 
 
@@ -8,7 +9,7 @@ interface DefaultContainerProps {
 
 const DefaultContainer: FC<DefaultContainerProps> = ({ children, className }) => {
     return (
-        <div className={`p-4 md:p-8 lg:p-12 ${className}`}>
+        <div className={cn(`flex flex-col flex-1 p-4 md:p-8`, className)}>
             {children}
         </div>
     )

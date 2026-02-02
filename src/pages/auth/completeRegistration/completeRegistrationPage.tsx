@@ -1,4 +1,5 @@
 import { StepButton, Stepper } from "@/components/common/stepper";
+import { Button } from "@/components/ui/button";
 import { useAuthContext } from "@/hooks/context/useAuthContext";
 import { useClinicContext } from "@/hooks/context/useClinicContext";
 import { useStepperContext } from "@/hooks/context/useStepperContext";
@@ -7,46 +8,48 @@ import { Outlet, useNavigate } from "react-router-dom";
 
 const CompleteRegistrationPage = () => {
   const { currentStep, setSteps, canAccessStep, steps, goToStep } = useStepperContext();
-  const { user } = useAuthContext();
+  const { user, handleLogout } = useAuthContext();
   const { currentClinic } = useClinicContext();
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    setSteps([
-      {
-        id: "profile",
-        title: "Perfil",
-        description: "Atualze seu perfil",
-        url: "/pre-registration/profile",
-        isComplete: user?.status !== "PENDING_REGISTRATION",
-        canGoBack: true,
-      },
-      {
-        id: "clinic",
-        title: "Clinica",
-        description: "Optional address",
-        url: "/pre-registration/clinic",
-        isComplete: currentClinic?.status !== "PENDING_SETUP",
-        canGoBack: true,
-      },
-      {
-        id: "address",
-        title: "Endereço",
-        description: "Informe seu endereço",
-        url: "/pre-registration/address",
-        isComplete: currentClinic?.status !== "PENDING_SETUP",
-        canGoBack: true,
-      },
-      {
-        id: "employee",
-        title: "Equipe",
-        description: "Optional address",
-        url: "/pre-registration/team",
-        isComplete: false,
-        canGoBack: true,
-      },
-    ]);
+    if (user) {
+      setSteps([
+        {
+          id: "profile",
+          title: "Perfil",
+          description: "Atualze seu perfil",
+          url: "/pre-registration/profile",
+          isComplete: user?.status !== "PENDING_REGISTRATION",
+          canGoBack: true,
+        },
+        {
+          id: "clinic",
+          title: "Clinica",
+          description: "Optional address",
+          url: "/pre-registration/clinic",
+          isComplete: currentClinic?.status !== "PENDING_SETUP",
+          canGoBack: true,
+        },
+        {
+          id: "address",
+          title: "Endereço",
+          description: "Informe seu endereço",
+          url: "/pre-registration/address",
+          isComplete: currentClinic?.status !== "PENDING_SETUP",
+          canGoBack: true,
+        },
+        {
+          id: "employee",
+          title: "Equipe",
+          description: "Optional address",
+          url: "/pre-registration/team",
+          isComplete: false,
+          canGoBack: true,
+        },
+      ]);
+    }
   }, [user]);
 
 
@@ -76,6 +79,7 @@ const CompleteRegistrationPage = () => {
           <StepButton action='previous'>
             Anterior
           </StepButton>
+          <Button variant={"link"} onClick={handleLogout}>Continuar mais tarde</Button>
           <StepButton action='next'>
             Próximo
           </StepButton>

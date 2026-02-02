@@ -64,7 +64,7 @@ const CompleteRegistrationStepClinic = () => {
     const { currentClinic, handleCompleteClinic } = useClinicContext();
     const { completeStep, nextStep } = useStepperContext();
 
-    const [previewImage, setPreviewImage] = useState<string>();
+    const [previewImage, setPreviewImage] = useState<string>(currentClinic?.picture ?? '');
     const fileInputRef = useRef<HTMLInputElement | null>(null);
 
     const {
@@ -78,7 +78,10 @@ const CompleteRegistrationStepClinic = () => {
     } = useForm<ClinicStepFormData>({
         resolver: zodResolver(clinicStepFormSchema),
         defaultValues: {
-            workingHours: [],
+            name: currentClinic?.name ?? '',
+            description: currentClinic?.description ?? '',
+            openedAt: currentClinic?.openedAt ?? undefined,
+            workingHours: currentClinic?.workingHours ?? [],
         },
     });
 
@@ -171,7 +174,7 @@ const CompleteRegistrationStepClinic = () => {
                             disabled={!previewImage}
                             onClick={() => {
                                 setValue('profilePicture', undefined, { shouldDirty: true });
-                                setPreviewImage(undefined);
+                                setPreviewImage("");
                             }}
                             className={`w-full`}
                         >
@@ -265,13 +268,13 @@ const CompleteRegistrationStepClinic = () => {
 
                             <Card className="col-span-5 bg-zinc-50">
                                 <CardContent className="space-y-3 overflow-y-auto max-h-32">
-                                    {fields.map((field, index) => {
-                                        const selectedDays = watchedValues.workingHours.map(d => d.dayOfWeek);
+                                    {fields?.map((field, index) => {
+                                        const selectedDays = watchedValues?.workingHours?.map(d => d.dayOfWeek);
 
                                         return (
                                             <div
                                                 key={field.id}
-                                                className="grid grid-cols-1 md:grid-cols-[1fr_5fr_auto] gap-2 items-end"
+                                                className="flex items-center gap-2"
                                             >
                                                 {/* DIA */}
                                                 <Controller
@@ -282,7 +285,7 @@ const CompleteRegistrationStepClinic = () => {
                                                             value={String(field.value)}
                                                             onValueChange={(value) => field.onChange(Number(value))}
                                                         >
-                                                            <SelectTrigger className='w-full'>
+                                                            <SelectTrigger className='flex-1'>
                                                                 <SelectValue placeholder="Dia" />
                                                             </SelectTrigger>
 
@@ -305,7 +308,7 @@ const CompleteRegistrationStepClinic = () => {
                                                 />
 
                                                 {/* ABERTURA */}
-                                                <div className='flex items-center justify-start gap-2'>
+                                                <div className='flex-1 flex items-center justify-start gap-2'>
                                                     <Input
                                                         type="time"
                                                         className="bg-background [&::-webkit-calendar-picker-indicator]:hidden"

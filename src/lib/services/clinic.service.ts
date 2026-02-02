@@ -8,16 +8,14 @@ export const ClinicService = {
             return await ClinicApi.completeClinic(payload);
         } catch (err) {
             const axiosError = err as AxiosError<CompleteClinicCustomError>;
-            const customError: CompleteClinicCustomError = {
+            throw {
                 status: axiosError.response?.status || 500,
                 message:
                     axiosError.response?.data?.message ||
                     axiosError.message ||
                     "Erro desconhecido",
                 error: axiosError.response?.data?.error
-            }
-
-            throw customError;
+            } as CompleteClinicCustomError;
         }
     },
 }

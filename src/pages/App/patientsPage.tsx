@@ -15,9 +15,9 @@ const PatientsPage: FC = () => {
         setPageDescription("Cadastre e gerencie os dados de seus pacientes.")
     }, [])
     return (
-        <DefaultContainer className='grid lg:grid-cols-[auto_1fr] gap-8'>
-            <PatientsListContainer patients={patients} className='flex-1' />
-            <PatientProfileCard className='min-w-sm' />
+        <DefaultContainer className='flex-col xl:flex-row gap-8'>
+            <PatientsListContainer patients={patients} className='xl:max-w-md' />
+            <PatientProfileCard className='flex-1' />
         </DefaultContainer>
     )
 }

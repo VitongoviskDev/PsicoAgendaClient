@@ -11,17 +11,16 @@ import type {
     LogoutResposne,
     MePayload,
     MeResponse,
-    RegisterOwnerPayload,
-    RegisterOwnerResponse,
-    ResendVerificationEmailPayload,
-    ResendVerificationEmailResponse
 } from "@/lib/types/auth";
 import { api } from "./client";
+import type { ResendEmailVerificationResponse } from "../types/auth/resendEmailVerification";
+import type { RegisterUserPayload, RegisterUserResponse } from "../types/user/register-user";
+import type { VerifyEmailVerificationPayload, VerifyEmailVerificationResponse } from "../types/auth/verifyEmailVerificationCode";
 
 export const AuthAPI = {
 
-    async registerOwner(payload: RegisterOwnerPayload): Promise<RegisterOwnerResponse> {
-        const { data } = await api.post<RegisterOwnerResponse>("/auth/register-owner", payload);
+    async registerOwner(payload: RegisterUserPayload): Promise<RegisterUserResponse> {
+        const { data } = await api.post<RegisterUserResponse>("/auth/register", payload);
         return data;
     },
 
@@ -54,14 +53,6 @@ export const AuthAPI = {
         return data;
     },
 
-    async resendVerificationEmail(payload: ResendVerificationEmailPayload): Promise<ResendVerificationEmailResponse> {
-        const response = await api.post<ResendVerificationEmailResponse>(
-            "/auth/resend-confirm-email",
-            payload
-        );
-        return response.data;
-    },
-
     async changePassword(payload: ChangePasswordPayload): Promise<ChangePasswordResponse> {
         const response = await api.put<ChangePasswordResponse>(
             "/auth/change-password",
@@ -79,5 +70,19 @@ export const AuthAPI = {
             }
         );
         return data;
+    },
+
+    async resendEmailVerificationCode(): Promise<ResendEmailVerificationResponse> {
+        const response = await api.post<ResendEmailVerificationResponse>(
+            "/auth/resend-email-verification-code",
+        );
+        return response.data;
+    },
+    async verifyEmailVerificationCode(payload: VerifyEmailVerificationPayload): Promise<VerifyEmailVerificationResponse> {
+        const response = await api.post<VerifyEmailVerificationResponse>(
+            "/auth/verify-email-verification-code",
+            payload.body
+        );
+        return response.data;
     },
 };

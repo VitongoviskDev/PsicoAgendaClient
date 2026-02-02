@@ -1,18 +1,17 @@
+export type BasePayload<T extends {
+  params?: object
+  body?: object
+}> = T
+
 export type BaseResponse<TData> = {
     message: string;
     data: TData
     status: number;
 }
-export type RouteParamsTypes = string | number;
-export type RouteParams = Record<string, RouteParamsTypes>
-
-export interface BasePayload {
-    routeParams: RouteParams;
-}
 
 export type BaseCustomError<TData> = {
     status: number;
-    error?: TData
+    error: TData
     message: string;
 }
 
@@ -44,6 +43,6 @@ export interface ServerCustomError extends BaseCustomError<{
 
 export type TErrorField<TData> = {
     field: TData;
-    errors: string[]
+    error: string
 }
 export type TPicture = Blob | File;

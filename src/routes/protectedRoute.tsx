@@ -3,7 +3,7 @@ import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import type { FC } from 'react';
 import { useClinicContext } from '@/hooks/context/useClinicContext';
 
-const ProtectedLayout: FC = () => {
+const ProtectedRoute: FC = () => {
     const { isAuthenticated, user } = useAuthContext();
     const { currentClinic } = useClinicContext();
     const location = useLocation();
@@ -18,11 +18,12 @@ const ProtectedLayout: FC = () => {
             currentClinic?.status === 'PENDING_SETUP'
         ) &&
         !location.pathname.startsWith("/pre-registration")
-    ) {
+    )
         return <Navigate to="/pre-registration" replace />;
-    }
+    else if (user?.status === "PENDING_EMAIL_VERIFICATION")
+        return <Navigate to="/email-verification" replace />;
 
     return <Outlet />;
 };
 
-export default ProtectedLayout;
+export default ProtectedRoute;

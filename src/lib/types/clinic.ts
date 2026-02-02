@@ -1,4 +1,4 @@
-import type { BaseCustomError, BasePayload, BaseResponse, TErrorField, TPicture } from "./api";
+import type { BaseCustomError, BaseResponse, TErrorField, TPicture } from "./api";
 
 export interface Clinic {
     id: string;
@@ -6,7 +6,8 @@ export interface Clinic {
     description?: string;
     status: ClinicStatus;
     openedAt: Date;
-    workingHours: WorkingHours
+    picture?: string;
+    workingHours: WorkingHours[];
 }
 
 export const ClinicStatus = {
@@ -30,7 +31,7 @@ export interface CompleteClinicPayload {
     workingHours: WorkingHours[];
     picture?: TPicture;
 }
-export interface SwitchClinicPayload extends BasePayload { }
+export interface SwitchClinicPayload { }
 
 export interface CompleteClinicResponse extends BaseResponse<{
     clinic: Clinic;

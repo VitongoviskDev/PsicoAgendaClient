@@ -27,7 +27,7 @@ import {
     type Appointment,
     type AppointmentStatus
 } from '@/lib/types/appointment';
-import { addDays } from 'date-fns';
+import { addDays, isSameDay } from 'date-fns';
 import { useEffect, useState } from 'react';
 import Badge from '@/components/ui/badge';
 
@@ -138,18 +138,14 @@ const AgendaPage = () => {
         .filter(a => {
             if (!date) return false;
 
-            return (
-                a.date.getFullYear() === date.getFullYear() &&
-                a.date.getMonth() === date.getMonth() &&
-                a.date.getDate() === date.getDate()
-            );
+            return isSameDay(a.date, date)
         })
         .sort((a, b) => a.date.getTime() - b.date.getTime());
 
 
     return (
         <DefaultContainer>
-            <CreateAppointmentDialog dialogKey='agenda-create-appointment' date={date} />
+            <CreateAppointmentDialog date={date} />
 
             <Card>
                 <CardHeader>

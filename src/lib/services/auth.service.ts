@@ -6,39 +6,35 @@ import type {
     ForgotPasswordCustomError,
     ForgotPasswordPayload,
     ForgotPasswordReseponse,
-    LoginCustomError,
+    LoginForbidenError,
     LoginPayload,
     LoginResponse,
     LogoutCustomErrror,
     LogoutResposne,
     MeCustomError,
     MePayload,
-    MeResponse,
-    RegisterCustomError,
-    RegisterOwnerPayload,
-    RegisterOwnerResponse,
-    ResendVerificationEmailCustomError,
-    ResendVerificationEmailPayload,
-    ResendVerificationEmailResponse
+    MeResponse
 } from "@/lib/types/auth";
 import { AxiosError } from "axios";
+import type { RegisterUserCustomError, RegisterUserPayload, RegisterUserResponse } from "../types/user/register-user";
+import type { ResendEmailVerificationCustomError, ResendEmailVerificationResponse } from "../types/auth/resendEmailVerification";
+import type { VerifyEmailVerificationCustomError, VerifyEmailVerificationPayload, VerifyEmailVerificationResponse } from "../types/auth/verifyEmailVerificationCode";
 
 export const AuthService = {
-    async registerOwner(payload: RegisterOwnerPayload): Promise<RegisterOwnerResponse> {
+    async registerOwner(payload: RegisterUserPayload): Promise<RegisterUserResponse> {
         try {
             return await AuthAPI.registerOwner(payload);
         } catch (err) {
-            const axiosError = err as AxiosError<RegisterCustomError>;
-            const customError: RegisterCustomError = {
+            const axiosError = err as AxiosError<any>;
+            throw {
                 status: axiosError.response?.status || 500,
                 message:
                     axiosError.response?.data?.message ||
                     axiosError.message ||
                     "Erro desconhecido",
-                error: axiosError.response?.data?.error
-            }
+                error: axiosError.response?.data?.errors
+            } as RegisterUserCustomError;
 
-            throw customError;
         }
     },
 
@@ -67,17 +63,15 @@ export const AuthService = {
         try {
             return await AuthAPI.login(payload);
         } catch (err) {
-            const axiosError = err as AxiosError<LoginCustomError>;
-            const customError: LoginCustomError = {
+            const axiosError = err as AxiosError<LoginForbidenError>;
+            throw {
                 status: axiosError.response?.status || 500,
                 message:
                     axiosError.response?.data?.message ||
                     axiosError.message ||
                     "Erro desconhecido",
                 error: axiosError.response?.data?.error
-            }
-
-            throw customError;
+            } as LoginForbidenError
         }
     },
 
@@ -126,21 +120,6 @@ export const AuthService = {
         }
     },
 
-    async resendVerificationEmail(payload: ResendVerificationEmailPayload): Promise<ResendVerificationEmailResponse> {
-        try {
-            return await AuthAPI.resendVerificationEmail(payload);
-        } catch (err) {
-            const axiosError = err as AxiosError<any>;
-            throw {
-                status: axiosError.response?.status || 500,
-                message:
-                    axiosError.response?.data?.message ||
-                    axiosError.message ||
-                    "Erro desconhecido",
-            } as ResendVerificationEmailCustomError;
-        }
-    },
-
     async changePassword(payload: ChangePasswordPayload): Promise<ChangePasswordResponse> {
         try {
             return await AuthAPI.changePassword(payload);
@@ -153,8 +132,37 @@ export const AuthService = {
                     axiosError.response?.data?.message ||
                     axiosError.message ||
                     "Erro desconhecido",
-                errors: axiosError.response?.data?.errors || []
+                error: axiosError.response?.data?.errors || []
             } as ChangePasswordCustomError;
+        }
+    },
+
+    async resendEmailVerificationCode(): Promise<ResendEmailVerificationResponse> {
+        try {
+            return await AuthAPI.resendEmailVerificationCode();
+        } catch (err) {
+            const axiosError = err as AxiosError<any>;
+            throw {
+                status: axiosError.response?.status || 500,
+                message:
+                    axiosError.response?.data?.message ||
+                    axiosError.message ||
+                    "Erro desconhecido",
+            } as ResendEmailVerificationCustomError;
+        }
+    },
+    async verifyEmailVerificationCode(payload: VerifyEmailVerificationPayload): Promise<VerifyEmailVerificationResponse> {
+        try {
+            return await AuthAPI.verifyEmailVerificationCode(payload);
+        } catch (err) {
+            const axiosError = err as AxiosError<any>;
+            throw {
+                status: axiosError.response?.status || 500,
+                message:
+                    axiosError.response?.data?.message ||
+                    axiosError.message ||
+                    "Erro desconhecido",
+            } as VerifyEmailVerificationCustomError;
         }
     },
 };

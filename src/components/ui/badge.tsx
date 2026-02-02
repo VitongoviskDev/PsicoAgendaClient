@@ -15,6 +15,8 @@ type BadgeColor =
     | "violet"
     | "pink"
     | "rose"
+    | "primary"
+    | "sidebar"
 
 const badgeColors: Record<BadgeColor, { bg: string; text: string; ring: string }> = {
     zinc: {
@@ -82,6 +84,16 @@ const badgeColors: Record<BadgeColor, { bg: string; text: string; ring: string }
         text: "text-rose-400",
         ring: "inset-ring inset-ring-rose-400/50",
     },
+    primary: {
+        bg: "bg-primary/10",
+        text: "text-primary",
+        ring: "inset-ring inset-ring-primary/50",
+    },
+    sidebar: {
+        bg: "bg-sidebar",
+        text: "text-sidebar-primary",
+        ring: "inset-ring inset-ring-sidebar-primary/50",
+    },
 };
 
 export interface BadgeProps {
@@ -91,7 +103,7 @@ export interface BadgeProps {
     rounded?: boolean;
 }
 
-const Badge = ({ color = "zinc", children, className, rounded }: BadgeProps) => {
+const Badge = ({ color = "primary", children, className, rounded }: BadgeProps) => {
     const colorClasses = badgeColors[color];
     const roundedClass = rounded ? "rounded-full" : "rounded-md";
 

@@ -37,7 +37,69 @@ export const getInitials = (fullname: string): string => {
 
 }
 
+export const hideEmail = (email: string): string => {
+  const [localPart, domain] = email.split("@");
+  if (localPart.length <= 2) {
+    return `${localPart[0]}***@${domain}`;
+  }
+  const visibleChars = Math.ceil(localPart.length / 3);
+  const hiddenChars = localPart.length - visibleChars;
+  const hiddenSection = "*".repeat(hiddenChars);
+  return `${localPart.slice(0, visibleChars)}${hiddenSection}@${domain}`;
+}
+
 
 export interface DefaultInterface {
   className?: string
+}
+
+export const TypeFormatter = {
+  toCpf(value: string) {
+    return value
+      .replace(/\D/g, '')
+      .substring(0, 11)
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+  },
+  fromCpf(value: string) {
+    return value
+      .replaceAll(".", "")
+      .replaceAll("-", "")
+  },
+  toPhone(value: string) {
+    const numbers = value.replace(/\D/g, '').substring(0, 11);
+
+    if (numbers.length <= 2) {
+      return numbers;
+    }
+
+    if (numbers.length <= 6) {
+      return numbers.replace(/(\d{2})(\d+)/, '($1) $2');
+    }
+
+    if (numbers.length <= 10) {
+      return numbers.replace(
+        /(\d{2})(\d{4})(\d+)/,
+        '($1) $2-$3'
+      );
+    }
+
+    return numbers.replace(
+      /(\d{2})(\d{5})(\d{4})/,
+      '($1) $2-$3'
+    );
+  },
+  toCrp(value: string) {
+    const numbers = value.replace(/\D/g, '').substring(0, 7);
+
+    if (numbers.length <= 2) {
+      return numbers;
+    }
+
+    return numbers.replace(
+      /(\d{2})(\d+)/,
+      '$1/$2'
+    );
+  }
 }

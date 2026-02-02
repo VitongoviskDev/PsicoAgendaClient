@@ -8,6 +8,7 @@ import { queryClient } from '@/lib/apis/queryClient';
 import { QueryClientProvider } from '@tanstack/react-query';
 import React, { type FC } from 'react';
 import { BrowserRouter } from 'react-router-dom';
+import { Toaster } from '../ui/sonner';
 
 
 interface ProvidesProps {
@@ -24,6 +25,7 @@ const Providers: FC<ProvidesProps> = ({ children }) => {
                                 <AuthProvider>
                                     <PatientProvider>
                                         <StepperProvider>
+                                            <Toaster />
                                             {children}
                                         </StepperProvider>
                                     </PatientProvider>

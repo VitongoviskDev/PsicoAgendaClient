@@ -1,39 +1,22 @@
+import z from "zod";
 import type { BaseCustomError, BaseResponse, TErrorField } from "./api";
 import type { Clinic } from "./clinic";
 import type { User } from "./user";
+
+
+export const loginSchema = z.object({
+    email: z.email("Email inválido"),
+    password: z.string().min(3, "A senha deve ter pelo menos 3 caracteres"),
+});
+
+export type LoginFormData = z.infer<typeof loginSchema>;
+
 
 //---------- PAYLOADS --------------------------------------------------
 // LOGIN
 export interface LoginPayload {
     email: string;
     password: string;
-}
-
-//REGISTER
-export interface RegisterOwnerPayload {
-    user: {
-        name: string,
-        email: string,
-        password: string,
-        confirm_password: string,
-    },
-    clinic?: {
-        name: string,
-        address?: string,
-        phone?: string,
-        status?: string,
-    },
-    psychologist?: {
-        crp: string;
-    }
-}
-
-export interface RegisterPayload {
-    name: string;
-    email: string;
-    password: string;
-    password_confirmation: string;
-    invite_token: string | null;
 }
 
 export interface CompleteRegistrationPayload {
@@ -61,12 +44,6 @@ export interface ChangePasswordPayload {
     new_password_confirmation: string;
 }
 //---------- RESPONSES --------------------------------------------------
-export interface RegisterOwnerResponse extends BaseResponse<{
-    user: User;
-    currentClinic: Clinic;
-    clinics: Clinic[];
-    access_token: string;
-}> { }
 
 export interface LoginResponse extends BaseResponse<{
     user: User;
@@ -93,21 +70,19 @@ export interface MeResponse extends BaseResponse<{
     // enterprise: Enterprise;
 }> { }
 
-export interface ResendVerificationEmailResponse extends BaseResponse<{}> { }
 
 export interface ChangePasswordResponse extends BaseResponse<{}> { }
 
 //---------- ERRORS --------------------------------------------------
 
-export interface LoginCustomError extends BaseCustomError<{
-    user?: User;
+export interface LoginForbidenError extends BaseCustomError<{
+    status: string;
+    user: User;
+    verification_token: string;
 }> { }
 
 export interface LogoutCustomErrror extends BaseCustomError<{}> { }
 
-export interface RegisterCustomError extends BaseCustomError<{
-    errors: TErrorField<"name" | "email" | "password" | "confirm_password">[];
-}> { }
 export interface CompleteRegistrationCustomError extends BaseCustomError<{
     errors: TErrorField<"name" | "image">[];
 }> { }
@@ -116,7 +91,6 @@ export interface ForgotPasswordCustomError extends BaseCustomError<{}> { }
 
 export interface MeCustomError extends BaseCustomError<{}> { }
 
-export interface ResendVerificationEmailCustomError extends BaseCustomError<{}> { }
 
 export interface ChangePasswordCustomError extends BaseCustomError<{
     errors: TErrorField<"password" | "new_password" | "new_password_confirmation">[];

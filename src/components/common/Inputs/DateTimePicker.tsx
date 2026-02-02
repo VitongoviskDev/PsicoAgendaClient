@@ -4,7 +4,7 @@ import * as React from "react"
 import { ChevronDownIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
+import { Calendar, GetDisabledDate, type CalendarDateRules } from "@/components/ui/calendar"
 import { Input } from "@/components/ui/input"
 import {
     Popover,
@@ -17,19 +17,31 @@ import {
     FieldLabel,
     FieldSet
 } from "@/components/ui/field"
+import type { FC } from "react"
 
-export function DateTimePickerInput({
-    date,
-    setDate,
-    time,
-    setTime,
-}: {
+
+interface DateTimePickerInputProps {
     date: Date | undefined
     setDate: (date: Date | undefined) => void
     time: string
     setTime: (time: string) => void
-}) {
+    startMonth?: Date;
+    endMonth?: Date;
+    calendarRules?: CalendarDateRules;
+}
+const DateTimePickerInput: FC<DateTimePickerInputProps> = ({
+    date,
+    setDate,
+    time,
+    setTime,
+    startMonth,
+    endMonth = new Date(new Date().getFullYear() + 1, new Date().getMonth(), 1),
+    calendarRules = {
+        type: "any-date"
+    }
+}) => {
     const [open, setOpen] = React.useState(false)
+
 
     return (
         <FieldSet>
@@ -56,7 +68,9 @@ export function DateTimePickerInput({
                                     setDate(selectedDate)
                                     setOpen(false)
                                 }}
-                                disabled={(day) => day < new Date(new Date().setHours(0, 0, 0, 0))}
+                                startMonth={startMonth}
+                                endMonth={endMonth}
+                                disabled={(day) => GetDisabledDate(day, calendarRules)}
                             />
                         </PopoverContent>
                     </Popover>
@@ -80,3 +94,5 @@ export function DateTimePickerInput({
         </FieldSet>
     )
 }
+
+export default DateTimePickerInput;
