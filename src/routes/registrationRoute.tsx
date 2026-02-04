@@ -6,7 +6,7 @@ const RegistrationLayout: FC = () => {
     const { user } = useAuthContext();
 
     if (user?.status !== "PENDING_EMAIL_VERIFICATION" &&
-        user?.status !== "PENDING_REGISTRATION") {
+        user?.status !== "PENDING_REGISTARTION") {
         return <Navigate to="/login" replace />;
     }
 

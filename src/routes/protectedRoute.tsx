@@ -14,7 +14,7 @@ const ProtectedRoute: FC = () => {
 
     if (
         (
-            user?.status === "PENDING_REGISTRATION" ||
+            user?.status === "PENDING_REGISTARTION" ||
             currentClinic?.status === 'PENDING_SETUP'
         ) &&
         !location.pathname.startsWith("/pre-registration")

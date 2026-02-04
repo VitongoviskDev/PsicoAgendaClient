@@ -88,6 +88,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             if (response.data.user.status === UserStatus.PENDING_EMAIL_VERIFICATION) {
                 navigate("/email-verification")
                 return;
+            } else if (response.data.user.status === UserStatus.PENDING_REGISTRATION) {
+                navigate("/pre-registration")
+                return;
             }
 
             emit("login", {

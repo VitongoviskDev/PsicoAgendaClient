@@ -38,6 +38,7 @@ const AppRouter: FC = () => {
                 </Route>
             </Route>
             <Route element={<ProtectedRoute />}>
+
                 <Route path="/pre-registration" element={<CompleteRegistrationPage />}>
                     <Route index element={<Navigate to="profile" replace />} />
                     <Route path="profile" element={<CompleteRegistrationStepProfile />} />
@@ -45,6 +46,7 @@ const AppRouter: FC = () => {
                     <Route path="clinic" element={<CompleteRegistrationStepClinic />} />
                     <Route path="team" element={<CompleteRegistrationStepTeam />} />
                 </Route>
+
                 <Route element={<SidebarLayout />}>
                     <Route index path="/" element={<DashboardPage />} />
                     <Route path="/agenda" element={<AgendaPage />} />

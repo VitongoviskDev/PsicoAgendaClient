@@ -21,7 +21,7 @@ const CompleteRegistrationPage = () => {
           title: "Perfil",
           description: "Atualze seu perfil",
           url: "/pre-registration/profile",
-          isComplete: user?.status !== "PENDING_REGISTRATION",
+          isComplete: user?.status !== "PENDING_REGISTARTION",
           canGoBack: true,
         },
         {
