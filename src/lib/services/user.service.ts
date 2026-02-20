@@ -1,16 +1,14 @@
-import { AxiosError } from "axios";
+import { UserApi } from "@/lib/apis/user.api";
 import type {
-    CompleteOwnerProfileCustomError,
-    CompleteOwnerProfilePayload,
-    CompleteOwnerProfileResponse,
     UpdateUserCustomError,
     UpdateUserPayload,
     UpdateUserResponse,
     UserByCpfCustomError,
     UserByCpfPayload,
     UserByCpfResponse
-} from "@/lib/types/user";
-import { UserApi } from "@/lib/apis/user.api";
+} from "@/lib/types/user/user";
+import { AxiosError } from "axios";
+import type { CompleteProfileCustomError, CompleteProfilePayload, CompleteProfileResponse } from "../types/user/complete-profile";
 
 export const UserService = {
     async updateUser(payload: UpdateUserPayload): Promise<UpdateUserResponse> {
@@ -24,24 +22,24 @@ export const UserService = {
                     axiosError.response?.data?.message ||
                     axiosError.message ||
                     "Erro desconhecido",
-                error: axiosError.response?.data?.error
+                errors: axiosError.response?.data?.error
             }
 
             throw customError;
         }
     },
-    async completeOwnerProfile(payload: CompleteOwnerProfilePayload): Promise<CompleteOwnerProfileResponse> {
+    async completeProfile(payload: CompleteProfilePayload): Promise<CompleteProfileResponse> {
         try {
-            return await UserApi.completeOwnerProfile(payload);
+            return await UserApi.completeProfile(payload);
         } catch (err) {
             const axiosError = err as AxiosError<any>;
-            const customError: CompleteOwnerProfileCustomError = {
+            const customError: CompleteProfileCustomError = {
                 status: axiosError.response?.status || 500,
                 message:
                     axiosError.response?.data?.message ||
                     axiosError.message ||
                     "Erro desconhecido",
-                error: axiosError.response?.data?.error
+                errors: axiosError.response?.data?.errors
             }
 
             throw customError;
@@ -58,7 +56,7 @@ export const UserService = {
                     axiosError.response?.data?.message ||
                     axiosError.message ||
                     "Erro desconhecido",
-                error: axiosError.response?.data?.error
+                errors: axiosError.response?.data?.error
             }
             throw customError;
         }

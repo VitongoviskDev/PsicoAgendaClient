@@ -32,13 +32,14 @@ export interface NavMainItem {
 export function NavMain({
   items,
 }: {
-  items: NavMainItem[]
+  items: (NavMainItem | null)[]
 }) {
+  const filteredItems = items.filter((item) => item !== null);
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Platform</SidebarGroupLabel>
       <SidebarMenu>
-        {items.map((item) => (
+        {filteredItems.map((item) => (
           <Collapsible key={item.title} asChild defaultOpen={item.isActive}>
             <SidebarMenuItem>
               <SidebarMenuButton asChild={!!item.url} tooltip={item.title}>

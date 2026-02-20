@@ -11,89 +11,93 @@ import {
 } from "@/components/ui/sidebar"
 import { LuBadgeCheck, LuBell, LuCalendar, LuChartColumn, LuCreditCard, LuLayoutDashboard, LuLifeBuoy, LuSend, LuSparkles, LuUsers } from "react-icons/lu"
 import TeamSwitcher from "./team-switcher"
+import { useStaffAccess } from "@/hooks/auth/useStaffAccess"
+import { StaffProfileRole } from "@/lib/types/user/user"
 
 
 interface Nav {
-  navMain: NavMainItem[]
-  navSecondary: NavSecondaryItem[]
-  navUser: NavUserGroup[]
-}
-
-const data: Nav = {
-  navMain: [
-    {
-      title: "Dashboard",
-      url: "/",
-      icon: LuLayoutDashboard,
-      isActive: true,
-    },
-    {
-      title: "Agenda",
-      url: "/agenda",
-      icon: LuCalendar,
-    },
-    {
-      title: "Pacientes",
-      url: "/patients",
-      icon: LuUsers,
-    },
-    {
-      title: "Administrativo",
-      icon: LuChartColumn,
-      url: "#"
-    },
-    {
-      title: "Notificações",
-      icon: LuBell,
-      url: "/notifications"
-    },
-  ],
-  navSecondary: [
-    {
-      title: "Support",
-      url: "#",
-      icon: LuLifeBuoy,
-    },
-    {
-      title: "Feedback",
-      url: "#",
-      icon: LuSend,
-    },
-  ],
-  navUser: [
-    {
-      id: "",
-      items: [
-        {
-          title: "Upgrade to Pro",
-          url: "#/upgrade",
-          icon: LuSparkles,
-        }
-      ]
-    },
-    {
-      id: "",
-      items: [
-        {
-          title: "Perfil",
-          url: "/profile",
-          icon: LuBadgeCheck
-        },
-        {
-          title: "Billing",
-          url: "#/billing",
-          icon: LuCreditCard
-        }
-      ]
-    }
-
-  ],
+  navMain: (NavMainItem | null)[]
+  navSecondary: (NavSecondaryItem | null)[]
+  navUser: (NavUserGroup | null)[]
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const employee = useStaffAccess({ minRole: StaffProfileRole.EMPLOYEE })
+  const admin = useStaffAccess({ minRole: StaffProfileRole.ADMIN })
+
+  const data: Nav = {
+    navMain: [
+      {
+        title: "Dashboard",
+        url: "/",
+        icon: LuLayoutDashboard,
+        isActive: true,
+      },
+      employee ? {
+        title: "Agenda",
+        url: "/agenda",
+        icon: LuCalendar,
+      } : null,
+      employee ? {
+        title: "Pacientes",
+        url: "/patients",
+        icon: LuUsers,
+      } : null,
+      admin ? {
+        title: "Administrativo",
+        icon: LuChartColumn,
+        url: "#"
+      } : null,
+      {
+        title: "Notificações",
+        icon: LuBell,
+        url: "/notifications"
+      },
+    ],
+    navSecondary: [
+      {
+        title: "Support",
+        url: "#",
+        icon: LuLifeBuoy,
+      },
+      {
+        title: "Feedback",
+        url: "#",
+        icon: LuSend,
+      },
+    ],
+    navUser: [
+      {
+        id: "",
+        items: [
+          {
+            title: "Upgrade to Pro",
+            url: "#/upgrade",
+            icon: LuSparkles,
+          }
+        ]
+      },
+      {
+        id: "",
+        items: [
+          {
+            title: "Perfil",
+            url: "/profile",
+            icon: LuBadgeCheck
+          },
+          {
+            title: "Billing",
+            url: "#/billing",
+            icon: LuCreditCard
+          }
+        ]
+      }
+
+    ],
+  }
 
   return (
-    <Sidebar variant="inset" {...props}>
+    <Sidebar variant="inset" {...props} collapsible="icon">
       <SidebarHeader>
         <TeamSwitcher />
       </SidebarHeader>

@@ -2,15 +2,11 @@
 
 
 import type { Patient } from "@/lib/types/patient";
-import type { UserByCpfCustomError, UserByCpfPayload, User } from "@/lib/types/user";
 import { createContext, useState, type ReactNode } from "react";
-import { toast } from "sonner";
 
 interface PatientContextType {
     selectedPatient: Patient | null;
     handleChangePatient: (patient: Patient | null) => void;
-
-    getPatientByCPF: (payload: UserByCpfPayload) => Promise<User> | null;
 }
 
 export const PatientContext = createContext<PatientContextType | undefined>(undefined);
@@ -27,25 +23,12 @@ export function PatientProvider({ children }: { children: ReactNode }) {
         localStorage.setItem("patient-context", JSON.stringify(patient));
     }
 
-    const getPatientByCPF = () => {
-        try {
-            return null
-        } catch (err) {
-            const customError = err as UserByCpfCustomError;
-
-            toast.error(customError.message);
-
-            throw customError;
-        }
-    }
 
     return (
         <PatientContext.Provider
             value={{
                 selectedPatient,
                 handleChangePatient,
-
-                getPatientByCPF
             }}
         >
             {children}

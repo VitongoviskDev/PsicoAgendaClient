@@ -1,21 +1,21 @@
 import type { AxiosError } from "axios";
 import { ClinicApi } from "../apis/clinic.api";
-import type { CompleteClinicCustomError, CompleteClinicPayload, CompleteClinicResponse } from "../types/clinic";
+import type { RegisterClinicCustomError, RegisterClinicPayload, RegisterClinicResponse } from "../types/clinic/register-clinic";
 
 export const ClinicService = {
-    async completeClinic(payload: CompleteClinicPayload): Promise<CompleteClinicResponse> {
+    async registerClinic(payload: RegisterClinicPayload): Promise<RegisterClinicResponse> {
         try {
-            return await ClinicApi.completeClinic(payload);
+            return await ClinicApi.registerClinic(payload);
         } catch (err) {
-            const axiosError = err as AxiosError<CompleteClinicCustomError>;
+            const axiosError = err as AxiosError<RegisterClinicCustomError>;
             throw {
                 status: axiosError.response?.status || 500,
                 message:
                     axiosError.response?.data?.message ||
                     axiosError.message ||
                     "Erro desconhecido",
-                error: axiosError.response?.data?.error
-            } as CompleteClinicCustomError;
+                errors: axiosError.response?.data?.errors
+            } as RegisterClinicCustomError;
         }
     },
 }

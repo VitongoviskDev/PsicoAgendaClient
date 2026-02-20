@@ -40,10 +40,11 @@ export interface NavUserItem {
 export function NavUser({
   groups,
 }: {
-  groups: NavUserGroup[]
+  groups: (NavUserGroup | null)[]
 }) {
   const { isMobile } = useSidebar()
   const { user, handleLogout: logoutUser } = useAuthContext();
+  const filteredGroups = groups.filter((group) => group !== null);
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -82,7 +83,7 @@ export function NavUser({
                 </div>
               </div>
             </DropdownMenuLabel>
-            {groups.map((group) => (
+            {filteredGroups.map((group) => (
               <>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup key={group.id}>

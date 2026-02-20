@@ -32,7 +32,7 @@ export const AuthService = {
                     axiosError.response?.data?.message ||
                     axiosError.message ||
                     "Erro desconhecido",
-                error: axiosError.response?.data?.errors
+                errors: axiosError.response?.data?.errors
             } as RegisterUserCustomError;
 
         }
@@ -70,7 +70,7 @@ export const AuthService = {
                     axiosError.response?.data?.message ||
                     axiosError.message ||
                     "Erro desconhecido",
-                error: axiosError.response?.data?.error
+                errors: axiosError.response?.data?.errors
             } as LoginForbidenError
         }
     },
@@ -132,7 +132,7 @@ export const AuthService = {
                     axiosError.response?.data?.message ||
                     axiosError.message ||
                     "Erro desconhecido",
-                error: axiosError.response?.data?.errors || []
+                errors: axiosError.response?.data?.errors || []
             } as ChangePasswordCustomError;
         }
     },

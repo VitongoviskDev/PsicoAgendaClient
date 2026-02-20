@@ -18,11 +18,9 @@ import { useEffect, useRef } from "react"
 import { Controller, useForm } from "react-hook-form"
 import { toast } from "sonner"
 
-
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp"
 import { Spinner } from "@/components/ui/spinner"
 import { useResendEmailVerifyCode } from "@/hooks/auth/useResendEmailVerificationCode"
-import { useVerifyEmailVerificationCode } from "@/hooks/auth/useVerifyEmailVerificationCode"
 import { useAuthContext } from "@/hooks/context/useAuthContext"
 import type { ResendEmailVerificationCustomError } from "@/lib/types/auth/resendEmailVerification"
 import { verifyEmailVerificationCodeSchema, type VerifyEmailVerificationCodeFormData, type VerifyEmailVerificationCustomError, type VerifyEmailVerificationPayload } from "@/lib/types/auth/verifyEmailVerificationCode"
@@ -32,10 +30,10 @@ import EmailVerificationImage from '/images/auth/emailVerification.png'
 
 const EmailVerificationPage = () => {
 
-    const { user } = useAuthContext();
+    const { user, handleVerifyEmail } = useAuthContext();
 
     const { mutateAsync: resendEmailVerificationCode, isPending: isResending } = useResendEmailVerifyCode();
-    const { mutateAsync: verifyEmailVerificationCode, isPending: isVerifying } = useVerifyEmailVerificationCode();
+    const isVerifying = false; // logic handled by handleVerifyEmail but you can add a local state if needed
 
     const {
         handleSubmit,
@@ -65,8 +63,8 @@ const EmailVerificationPage = () => {
                     code: formData.code
                 }
             }
-            const response = await verifyEmailVerificationCode(payload)
-            toast.success(response.message)
+            await handleVerifyEmail(payload)
+            toast.success("Email verificado com sucesso!")
         } catch (err) {
             const customEror = err as VerifyEmailVerificationCustomError;
             toast.error(customEror.message)
@@ -149,7 +147,7 @@ const EmailVerificationPage = () => {
                         <img
                             src={EmailVerificationImage}
                             alt="Image"
-                            className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+                            className="absolute inset-0 h-full w-full object-cover"
                         />
                     </div>
                 </CardContent>

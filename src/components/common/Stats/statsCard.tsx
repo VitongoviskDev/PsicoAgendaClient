@@ -32,8 +32,8 @@ const StatsCard: FC<StatsCardProps> = ({ stats }) => {
         <Card className="gap-0 p-4 pb-2 group">
             <div className="flex-1 flex justify-between">
                 <div>
-                    <CardTitle className="text-zinc-500" >{stats.title}</CardTitle>
-                    <h3 className="font-bold text-2xl text-zinc-700">{stats.value.value}{stats.value.isPercentage && "%"}</h3>
+                    <CardTitle className="text-zinc-500 dark:text-zinc-400" >{stats.title}</CardTitle>
+                    <h3 className="font-bold text-2xl text-zinc-700 dark:text-zinc-200">{stats.value.value}{stats.value.isPercentage && "%"}</h3>
                 </div>
                 <div className={`
                     p-3! rounded-[20%]

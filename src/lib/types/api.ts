@@ -1,17 +1,17 @@
 export type BasePayload<T extends {
-  params?: object
-  body?: object
+    params?: object
+    body?: object
 }> = T
 
 export type BaseResponse<TData> = {
     message: string;
-    data: TData
+    data: TData;
     status: number;
 }
 
 export type BaseCustomError<TData> = {
     status: number;
-    error: TData
+    errors: TData
     message: string;
 }
 

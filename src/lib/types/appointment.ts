@@ -1,14 +1,16 @@
+import type { SessionStatus } from "./session";
+
 export interface Appointment {
-    id: number;
+    id: string;
     patientName: string;
     date: Date;
-    status: AppointmentStatus;
+    status: SessionStatus;
 }
 
-export type AppointmentStatus = 
-    'done' 
-    | 'confirmed' 
-    | 'cancelled' 
-    | 'rescheduled' 
+export type AppointmentStatus =
+    'done'
+    | 'confirmed'
+    | 'cancelled'
+    | 'rescheduled'
     | 'absence'
     | 'waiting'

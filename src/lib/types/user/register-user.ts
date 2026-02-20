@@ -1,6 +1,6 @@
 import z from "zod";
 import type { BaseCustomError, BaseResponse, TErrorField } from "../api";
-import type { User } from "../user";
+import type { User } from "./user";
 
 export const registerSchema = z.object({
     name: z.string().min(3, "Nome deve conter pelo menos 3 caracteres"),
@@ -21,10 +21,11 @@ export interface RegisterUserPayload {
 
 export interface RegisterUserResponse extends BaseResponse<{
     user: User;
-    access_token: string;
+    access_token?: string;
+    onboarding_token?: string;
 }> { }
 
 
 export interface RegisterUserCustomError extends BaseCustomError<{
-    errors: TErrorField<"name" | "email" | "password" | "confirm_password">[];
+    fields: TErrorField<"name" | "email" | "password" | "confirm_password">[];
 }> { }

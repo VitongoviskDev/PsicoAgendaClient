@@ -1,5 +1,4 @@
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import Badge from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { usePatientContext } from '@/hooks/context/usePatientContext';
@@ -7,23 +6,39 @@ import { cn, getInitials, type DefaultInterface } from '@/lib/utils';
 import type { FC } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import AutoHeightContainer from '../../autoHeightContainer';
+import ProfileStatusBadge from '../../profile/profileStatusBadge';
+import { useBreadCrumbContext } from '@/hooks/useBreadCrumbContext';
 
 interface PatientProfileCardProps extends DefaultInterface {
 
 }
 
 const PatientProfileCard: FC<PatientProfileCardProps> = ({ className }) => {
+    const tabs = [
+        { label: 'Geral', value: 'overview' },
+        { label: 'Sessões', value: 'sessions' },
+        { label: 'Pagamentos', value: 'payments' },
+        { label: 'Notas', value: 'notes' },
+        { label: 'Registros', value: 'records' }
+    ]
+
+    const navigate = useNavigate();
+    const { setBreadCrumbItems } = useBreadCrumbContext();
+    const handleTabClick = (value: string) => {
+        const tab = tabs.find(tab => tab.value === value);
+        if (!tab) return;
+        setBreadCrumbItems([
+            { label: 'Pacientes', to: '/patients' },
+            { label: tab.label, to: tab.value }
+        ])
+        navigate(value);
+    }
+
     const { selectedPatient: patient } = usePatientContext();
     if (!patient) return;
 
-    const navigate = useNavigate();
-
-    const handleTabClick = (value: string) => {
-        navigate("/patients/" + value);
-    }
-
     const tabItemsStyle = `
-        flex-1 rounded-none border-0 not-last:border-r-1 border-zinc-200 
+        flex-1 rounded-none border-0 not-last:border-r-1 border-zinc-200 dark:border-zinc-800
         cursor-pointer
         data-[state=active]:bg-primary data-[state=active]:text-white
     `
@@ -40,23 +55,23 @@ const PatientProfileCard: FC<PatientProfileCardProps> = ({ className }) => {
                         <CardDescription>{patient.user.email}</CardDescription>
                     </div>
                 </div>
-                <Badge color='green'>{patient.status}</Badge>
+                <ProfileStatusBadge status={patient.status} />
             </CardHeader>
             <CardContent className='space-y-4'>
-                <Tabs defaultValue="/overview" onValueChange={handleTabClick} className='rounded-md overflow-hidden'>
+                <Tabs defaultValue={tabs[0].value} onValueChange={handleTabClick} className='rounded-md overflow-hidden'>
                     <TabsList className='flex w-full p-0 not-last:'>
-                        <TabsTrigger className={tabItemsStyle} value="/overview" >Geral</TabsTrigger>
-                        <TabsTrigger className={tabItemsStyle} value="/sessions">Sessões</TabsTrigger>
-                        <TabsTrigger className={tabItemsStyle} value="/payments">Pagamentos</TabsTrigger>
-                        <TabsTrigger className={tabItemsStyle} value="/notes">Notas</TabsTrigger>
-                        <TabsTrigger className={tabItemsStyle} value="/records">Registros</TabsTrigger>
+                        {
+                            tabs.map((tab) => (
+                                <TabsTrigger key={tab.value} className={tabItemsStyle} value={tab.value} >{tab.label}</TabsTrigger>
+                            ))
+                        }
                     </TabsList>
                 </Tabs>
                 <AutoHeightContainer>
                     <Outlet />
                 </AutoHeightContainer>
             </CardContent>
-        </Card>
+        </Card >
     )
 }
 

@@ -1,12 +1,11 @@
 import type {
-    CompleteOwnerProfilePayload,
-    CompleteOwnerProfileResponse,
     UpdateUserPayload,
     UpdateUserResponse,
     UserByCpfPayload,
     UserByCpfResponse
-} from "@/lib/types/user";
+} from "@/lib/types/user/user";
 import { api } from "./client";
+import type { CompleteProfilePayload, CompleteProfileResponse } from "../types/user/complete-profile";
 
 export const UserApi = {
     async updateUser(payload: UpdateUserPayload): Promise<UpdateUserResponse> {
@@ -26,30 +25,30 @@ export const UserApi = {
         const { data } = await api.post<UpdateUserResponse>(`/users/${payload.routeParams["id"]}`, form);
         return data;
     },
-    async completeOwnerProfile(payload: CompleteOwnerProfilePayload): Promise<CompleteOwnerProfileResponse> {
-        // const { data } = await api.put<UpdateUserResponse>(`/user/${payload.id}`, payload);
-        // return data;
-        const form = new FormData();
+    async completeProfile(payload: CompleteProfilePayload): Promise<CompleteProfileResponse> {
 
-        // form.append('clinic_id', payload.clinic_id);
-        form.append('cpf', payload.cpf);
-        form.append('birthDate', payload.birthDate.toISOString());
-        form.append('phone', payload.phone);
+        // const form = new FormData();
+        // const body = payload.body;
 
-        form.append('actAsPsychologist', String(payload.actAsPsychologist));
-        if (payload.actAsPsychologist && payload.crp) {
-            form.append('crp', payload.crp);
-        }
+        // form.append('cpf', body.cpf);
+        // form.append('birthDate', body.birthDate.toISOString());
+        // form.append('phone', body.phone);
 
-        if (payload.profile_picture) {
-            form.append('profile_picture', payload.profile_picture);
-        }
+        // form.append('actAsPsychologist', String(body.isPsychologist));
+        // if (body.isPsychologist && body.crp) {
+        //     form.append('crp', body.crp);
+        // }
+
+        // if (payload.profile_picture) {
+        //     form.append('profile_picture', payload.profile_picture);
+        // }
 
         // form.append("_method", "put");
 
-        const { data } = await api.post<CompleteOwnerProfileResponse>(`/users/complete-profile/owner`, form);
+        const { data } = await api.post<CompleteProfileResponse>(`/users/complete-profile`, payload.body);
         return data;
     },
+
     async getUserByCpf(payload: UserByCpfPayload): Promise<UserByCpfResponse> {
         const { data } = await api.get<UserByCpfResponse>(`/users/cpf/${payload.routeParams.cpf}`);
         return data;

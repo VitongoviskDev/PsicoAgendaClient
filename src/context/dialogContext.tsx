@@ -2,7 +2,7 @@
 import { createContext, useState, type ReactNode } from "react";
 
 export type DialogKey =
-    | "agenda-create-appointment"
+    | "agenda-create-session"
 
     | "patients-create-patient"
     ;

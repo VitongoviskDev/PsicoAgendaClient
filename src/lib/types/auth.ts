@@ -1,7 +1,7 @@
 import z from "zod";
 import type { BaseCustomError, BaseResponse, TErrorField } from "./api";
 import type { Clinic } from "./clinic";
-import type { User } from "./user";
+import type { User } from "./user/user";
 
 
 export const loginSchema = z.object({
@@ -47,9 +47,10 @@ export interface ChangePasswordPayload {
 
 export interface LoginResponse extends BaseResponse<{
     user: User;
-    currentClinic: Clinic;
-    clinics: Clinic[];
-    access_token: string;
+    current_clinic?: Clinic;
+    clinics?: Clinic[];
+    access_token?: string;
+    onboarding_token?: string;
 }> { }
 
 export interface CompleteRegistrationResponse extends BaseResponse<{

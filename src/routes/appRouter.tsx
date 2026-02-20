@@ -1,6 +1,5 @@
 import Developing from "@/components/common/Developing"
 import AuthLayout from "@/components/layouts/authLayout"
-import RegistrationRoute from "@/components/layouts/registrationLayout"
 import SidebarLayout from "@/components/layouts/sidebarLayout"
 import AgendaPage from "@/pages/App/agendaPage"
 import DashboardPage from "@/pages/App/dashboardPage"
@@ -10,7 +9,6 @@ import ProfilePage from "@/pages/App/profile/profilePage"
 import PersonalProfileTab from "@/pages/App/profile/tabs/personalProfile.tab"
 import CompleteRegistrationPage from "@/pages/auth/completeRegistration/completeRegistrationPage"
 import EmailVerificationPage from "@/pages/auth/completeRegistration/emailVerificationPage"
-import CompleteRegistrationStepAddress from "@/pages/auth/completeRegistration/steps/completeRegistrationStepAddress"
 import CompleteRegistrationStepClinic from "@/pages/auth/completeRegistration/steps/completeRegistrationStepClinic"
 import CompleteRegistrationStepProfile from "@/pages/auth/completeRegistration/steps/completeRegistrationStepProfile"
 import CompleteRegistrationStepTeam from "@/pages/auth/completeRegistration/steps/completeRegistrationStepTeam"
@@ -21,7 +19,10 @@ import ProtectedRoute from "@/routes/protectedRoute"
 import PublicRoute from "@/routes/publicRoute"
 import type { FC } from "react"
 import { Navigate, Route, Routes } from "react-router-dom"
-import RegistrationLayout from "./registrationRoute"
+import RegistrationRoute from "./registrationRoute"
+import RegistrationLayout from "@/components/layouts/registrationLayout"
+import SettiingsPage from "@/pages/App/settings/settiingsPage"
+import SettingsTeamTab from "@/pages/App/settings/tab/settingsTeamTab"
 
 const AppRouter: FC = () => {
     return (
@@ -32,19 +33,19 @@ const AppRouter: FC = () => {
                     <Route path="/register" element={<RegisterPage />} />
                 </Route>
             </Route>
-            <Route element={<RegistrationRoute />}>
-                <Route element={<RegistrationLayout />}>
-                    <Route path="/email-verification" element={<EmailVerificationPage />} />
-                </Route>
-            </Route>
             <Route element={<ProtectedRoute />}>
-
-                <Route path="/pre-registration" element={<CompleteRegistrationPage />}>
-                    <Route index element={<Navigate to="profile" replace />} />
-                    <Route path="profile" element={<CompleteRegistrationStepProfile />} />
-                    <Route path="address" element={<CompleteRegistrationStepAddress />} />
-                    <Route path="clinic" element={<CompleteRegistrationStepClinic />} />
-                    <Route path="team" element={<CompleteRegistrationStepTeam />} />
+                <Route path="/onboarding">
+                    <Route element={<RegistrationRoute />}>
+                        <Route element={<RegistrationLayout />}>
+                            <Route path="email-verification" element={<EmailVerificationPage />} />
+                        </Route>
+                        <Route path="pre-registration" element={<CompleteRegistrationPage />}>
+                            <Route index element={<Navigate to="profile" replace />} />
+                            <Route path="profile" element={<CompleteRegistrationStepProfile />} />
+                            <Route path="clinic" element={<CompleteRegistrationStepClinic />} />
+                            <Route path="team" element={<CompleteRegistrationStepTeam />} />
+                        </Route>
+                    </Route>
                 </Route>
 
                 <Route element={<SidebarLayout />}>
@@ -69,6 +70,15 @@ const AppRouter: FC = () => {
                         <Route path="formation" element={<Developing />} />
                         <Route path="profile" element={<Developing />} />
                         <Route path="password" element={<Developing />} />
+                    </Route>
+
+                    <Route path="/settings" element={<SettiingsPage />} >
+                        <Route index element={<Navigate to="clinic" replace />} />
+                        <Route path="clinic" element={<Developing />} />
+                        <Route path="team" element={<SettingsTeamTab />} />
+                        <Route path="formation" element={<Developing />} />
+                        <Route path="billing" element={<Developing />} />
+                        <Route path="notifications" element={<Developing />} />
                     </Route>
                 </Route>
             </Route>

@@ -1,5 +1,5 @@
 import { useLogin } from "@/hooks/auth/useLogin";
-import { setLogoutHandler } from "@/lib/apis/client";
+import { ACCESS_TOKEN_KEY, setLogoutHandler } from "@/lib/apis/client";
 
 // import { useEnterprise } from "@/hooks/enterprise/useEnterprise";
 // import { usePreference } from "@/hooks/preferences/usePreferences";
@@ -15,21 +15,21 @@ import type {
 } from "@/lib/types/auth";
 
 import { useRegisterUser } from "@/hooks/auth/useRegisterUser";
-import { useCompleteOwnerProfile } from "@/hooks/user/useCompleteOwnerProfile";
+import { useCompleteProfile } from "@/hooks/user/useCompleteProfile";
 import { emit } from "@/lib/eventBus";
 import {
     UserStatus,
-    type CompleteOwnerProfileCustomError,
-    type CompleteOwnerProfilePayload,
-    type CompleteOwnerProfileResponse,
     type UpdateUserPayload,
     type UpdateUserResponse,
     type User
-} from "@/lib/types/user";
+} from "@/lib/types/user/user";
+import type { CompleteProfileCustomError, CompleteProfilePayload, CompleteProfileResponse } from "@/lib/types/user/complete-profile";
+import type { RegisterUserPayload } from "@/lib/types/user/register-user";
+import { useVerifyEmailVerificationCode } from "@/hooks/auth/useVerifyEmailVerificationCode";
+import type { VerifyEmailVerificationPayload } from "@/lib/types/auth/verifyEmailVerificationCode";
 import { createContext, useState, type ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import type { RegisterUserPayload } from "@/lib/types/user/register-user";
 
 interface AuthContextType {
     user: User | null;
@@ -43,13 +43,16 @@ interface AuthContextType {
     handleGetMe: (payload?: MePayload) => Promise<void>
 
     handleUpdateUser: (payload: UpdateUserPayload) => Promise<UpdateUserResponse>;
-    handleCompleteOwnerProfile: (payload: CompleteOwnerProfilePayload) => Promise<CompleteOwnerProfileResponse>;
+    handleCompleteProfile: (payload: CompleteProfilePayload) => Promise<CompleteProfileResponse>;
+    handleVerifyEmail: (payload: VerifyEmailVerificationPayload) => Promise<void>;
+
+    syncAuthState: (user: User, token?: string) => void;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const USER_KEY = "auth_user";
-const ACCESS_TOKEN_KEY = "auth_access_token";
+
 export function AuthProvider({ children }: { children: ReactNode }) {
 
     const [user, setUser] = useState<User | null>(() => {
@@ -63,9 +66,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const navigate = useNavigate();
     const loginMutation = useLogin();
     const registerOwnerMutation = useRegisterUser();
-    const completeOwnerProfileMutation = useCompleteOwnerProfile();
+    const completeProfileMutation = useCompleteProfile();
+    const verifyEmailMutation = useVerifyEmailVerificationCode();
 
     const updateUserMutation = useUpdateUser();
+
+    const syncAuthState = (user: User, token?: string) => {
+        setUser(user);
+        localStorage.setItem(USER_KEY, JSON.stringify(user));
+
+        if (token) {
+            setToken(token);
+            localStorage.setItem(ACCESS_TOKEN_KEY, token);
+        }
+    };
 
     const clearSessionData = () => {
         localStorage.removeItem(USER_KEY);
@@ -79,26 +93,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         try {
             const response = await loginMutation.mutateAsync(payload);
 
-            setUser(response.data.user);
-            localStorage.setItem("user", JSON.stringify(response.data.user));
-
-            setToken(response.data.access_token);
-            localStorage.setItem("token", response.data.access_token);
+            const tokenValue = response.data.access_token || response.data.onboarding_token;
+            syncAuthState(response.data.user, tokenValue);
 
             if (response.data.user.status === UserStatus.PENDING_EMAIL_VERIFICATION) {
-                navigate("/email-verification")
+                navigate("/onboarding/email-verification")
                 return;
-            } else if (response.data.user.status === UserStatus.PENDING_REGISTRATION) {
-                navigate("/pre-registration")
+            } else if (
+                response.data.user.status === UserStatus.EMAIL_VERIFIED ||
+                response.data.user.status === UserStatus.PENDING_REGISTRATION
+            ) {
+                navigate("/onboarding/pre-registration")
                 return;
             }
 
-            emit("login", {
-                clinic: response.data.currentClinic,
-                clinics: response.data.clinics
-            });
-
-            navigate("/")
+            if (response.data.access_token) {
+                emit("login", {
+                    user: response.data.user,
+                    clinic: response.data.current_clinic,
+                    clinics: response.data.clinics
+                });
+                navigate("/")
+            }
 
         } catch (err) {
             console.log("LOGIN ERROR: ", err)
@@ -106,11 +122,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             console.log("LOGIN CUSTOM ERROR: ", customError)
 
             if (customError.status === 403) {
-                setUser(customError.error.user)
-                localStorage.setItem(USER_KEY, JSON.stringify(customError.error.user));
+                setUser(customError.errors.user)
+                localStorage.setItem(USER_KEY, JSON.stringify(customError.errors.user));
 
                 toast.info(customError.message)
-                navigate("/email-verification")
+                navigate("/onboarding/email-verification")
                 return
             }
 
@@ -122,15 +138,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         try {
             const response = await registerOwnerMutation.mutateAsync(payload);
 
-            setUser(response.data.user);
-            localStorage.setItem("user", JSON.stringify(response.data.user));
+            const tokenValue = response.data.access_token || response.data.onboarding_token;
+            syncAuthState(response.data.user, tokenValue);
 
-            setToken(response.data.access_token);
-            localStorage.setItem("token", response.data.access_token);
-
-            navigate("/email-verification")
+            navigate("/onboarding/email-verification")
             return;
 
+        } catch (err) {
+            throw err;
+        }
+    }
+
+    async function handleVerifyEmail(payload: VerifyEmailVerificationPayload) {
+        try {
+            const response = await verifyEmailMutation.mutateAsync(payload);
+
+            const tokenValue = response.data.access_token || response.data.onboarding_token;
+            syncAuthState(response.data.user, tokenValue);
+
+            if (response.data.user.status === UserStatus.EMAIL_VERIFIED || response.data.user.status === UserStatus.PENDING_REGISTRATION) {
+                navigate("/onboarding/pre-registration")
+            }
         } catch (err) {
             throw err;
         }
@@ -155,10 +183,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             const response = await AuthService.me(filteredPayload);
 
             setUser(response.data.user);
-            localStorage.setItem("user", JSON.stringify(response.data.user));
+            localStorage.setItem(USER_KEY, JSON.stringify(response.data.user));
 
             setToken(filteredPayload.token);
-            localStorage.setItem("token", filteredPayload.token);
+            localStorage.setItem(ACCESS_TOKEN_KEY, filteredPayload.token);
         } catch (err) {
             throw err;
         }
@@ -182,7 +210,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
             console.log("DATA:", response)
             setUser(response.data.user);
-            localStorage.setItem("user", JSON.stringify(response.data.user));
+            localStorage.setItem(USER_KEY, JSON.stringify(response.data.user));
 
             return response;
         } catch (err) {
@@ -190,16 +218,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
     }
 
-    async function handleCompleteOwnerProfile(payload: CompleteOwnerProfilePayload) {
+    async function handleCompleteProfile(payload: CompleteProfilePayload): Promise<CompleteProfileResponse> {
         try {
-            const response = await completeOwnerProfileMutation.mutateAsync(payload);
+            const response = await completeProfileMutation.mutateAsync(payload);
 
-            setUser(response.data.user);
-            localStorage.setItem("user", JSON.stringify(response.data.user));
+            const tokenValue = response.data.access_token || response.data.onboarding_token;
+            syncAuthState(response.data.user, tokenValue);
 
             return response;
         } catch (err) {
-            throw err as CompleteOwnerProfileCustomError;
+            throw err as CompleteProfileCustomError;
         }
     }
 
@@ -209,14 +237,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 user,
                 token,
                 isAuthenticated,
+
                 handleLogin,
                 handleLogout,
-                handleRegister,
                 recoveryPasswordUser,
                 handleGetMe,
-                handleUpdateUser,
 
-                handleCompleteOwnerProfile,
+                handleRegister,
+                handleCompleteProfile,
+                handleVerifyEmail,
+
+                handleUpdateUser,
+                syncAuthState,
             }}
         >
             {children}

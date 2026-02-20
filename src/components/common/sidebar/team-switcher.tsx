@@ -22,7 +22,9 @@ import { getInitials } from "@/lib/utils"
 import type { FC } from "react"
 import { LuSettings2 } from "react-icons/lu"
 import { Avatar, AvatarFallback } from "../../ui/avatar"
-
+import StaffRoleGuard from "../Auth/StaffRoleGuard"
+import { StaffProfileRole } from "@/lib/types/user/user"
+import { Link } from "react-router-dom"
 
 const TeamSwitcher: FC = () => {
     const { isMobile } = useSidebar()
@@ -55,13 +57,17 @@ const TeamSwitcher: FC = () => {
                         side={isMobile ? "bottom" : "right"}
                         sideOffset={4}
                     >
-                        <DropdownMenuItem className="gap-2 p-2">
-                            <div className="flex size-6 items-center justify-center rounded-md border bg-transparent">
-                                <LuSettings2 className="size-4" />
-                            </div>
-                            <div className="text-muted-foreground font-medium">Team Settings</div>
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
+                        <StaffRoleGuard minRole={StaffProfileRole.ADMIN}>
+                            <DropdownMenuItem className="gap-2 p-2" asChild>
+                                <Link to="/settings/clinic">
+                                    <div className="flex size-6 items-center justify-center rounded-md border bg-transparent">
+                                        <LuSettings2 className="size-4" />
+                                    </div>
+                                    <div className="text-muted-foreground font-medium">Team Settings</div>
+                                </Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                        </StaffRoleGuard>
                         <DropdownMenuLabel className="text-muted-foreground text-xs">
                             Teams
                         </DropdownMenuLabel>

@@ -101,5 +101,26 @@ export const TypeFormatter = {
       /(\d{2})(\d+)/,
       '$1/$2'
     );
+  },
+  toBirthDate(value: string) {
+    return value
+      .replace(/\D/g, "")
+      .substring(0, 8)
+      .replace(/(\d{2})(\d)/, "$1/$2")
+      .replace(/(\d{2})(\d)/, "$1/$2");
+  },
+  clean(value: string) {
+    return value.replace(/\D/g, "");
+  },
+  fromBirthDate(value: string) {
+    const raw = value.replace(/\D/g, "");
+    if (raw.length !== 8) return undefined;
+
+    const day = parseInt(raw.substring(0, 2));
+    const month = parseInt(raw.substring(2, 4)) - 1; // JS months are 0-indexed
+    const year = parseInt(raw.substring(4, 8));
+
+    const date = new Date(year, month, day);
+    return isNaN(date.getTime()) ? undefined : date;
   }
 }

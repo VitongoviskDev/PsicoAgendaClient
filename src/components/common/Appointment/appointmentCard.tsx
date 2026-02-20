@@ -5,6 +5,7 @@ import {
     type Appointment,
     type AppointmentStatus
 } from "@/lib/types/appointment";
+import type { SessionStatus } from "@/lib/types/session";
 
 
 interface AppointmentCardProps {
@@ -12,18 +13,19 @@ interface AppointmentCardProps {
 }
 
 const AppointmentCard: FC<AppointmentCardProps> = ({ appointment }) => {
-    const cardStyle: Record<AppointmentStatus, any> = {
-        waiting: { gradient: 'from-zinc-400 to-white' },
-        confirmed: { gradient: 'from-blue-400 to-white' },
-        done: { gradient: 'from-emerald-400 to-white' },
-        rescheduled: { gradient: 'from-violet-400 to-white' },
-        cancelled: { gradient: 'from-red-400 to-white' },
-        absence: { gradient: 'from-orange-400 to-white' },
+    const cardStyle: Record<SessionStatus, any> = {
+        WAITING_CONFIRMATION: { gradient: 'from-zinc-400 to-white dark:from-zinc-400 dark:to-zinc-900' },
+        CONFIRMED: { gradient: 'from-blue-400 to-white dark:from-blue-400 dark:to-zinc-900' },
+        COMPLETED: { gradient: 'from-emerald-400 to-white dark:from-emerald-400 dark:to-zinc-900' },
+        RESCHEDULED: { gradient: 'from-violet-400 to-white dark:from-violet-400 dark:to-zinc-900' },
+        CANCELED: { gradient: 'from-red-400 to-white dark:from-red-400 dark:to-zinc-900' },
+        // CANCELED2: { gradient: 'from-orange-400 to-white' },
     };
+
 
     return (
         <Card className={`mb-4 p-0.5 bg-linear-to-tr ${cardStyle[appointment.status].gradient}`}>
-            <div className='rounded-lg py-6 bg-white'>
+            <div className='rounded-lg py-6 bg-white dark:bg-zinc-900'>
                 <CardContent className="flex items-center gap-4">
                     <p className="text-sm text-muted-foreground">
                         {

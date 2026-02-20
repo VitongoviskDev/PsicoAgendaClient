@@ -1,11 +1,10 @@
 import AutoHeightContainer from "@/components/common/autoHeightContainer";
-import DefaultContainer from "@/components/common/DefaultContainer";
+import DefaultPageContainer from "@/components/common/DefaultPageContainer";
 import { AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Badge from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuthContext } from "@/hooks/context/useAuthContext";
-import { useHeaderContext } from "@/hooks/context/useHeaderContext";
 import { getInitials, TypeFormatter } from "@/lib/utils";
 import { Avatar } from "@radix-ui/react-avatar";
 import { useEffect, type FC } from "react";
@@ -14,14 +13,8 @@ import { LuMail, LuPhone } from "react-icons/lu";
 import { Outlet, useNavigate } from "react-router-dom";
 
 const ProfilePage: FC = () => {
-    const { setPageTitle, setPageDescription } = useHeaderContext();
     const { user } = useAuthContext();
     const navigate = useNavigate();
-
-    useEffect(() => {
-        setPageTitle("Perfil")
-        setPageDescription("Gerencie seus dados de perfil e mantenha sempre atualizado.")
-    })
 
     const handleTabClick = (value: string) => {
         navigate(value);
@@ -33,7 +26,12 @@ const ProfilePage: FC = () => {
         data-[state=active]:bg-primary data-[state=active]:text-white
     `
     return (
-        <DefaultContainer className="flex-col xl:flex-row gap-8">
+        <DefaultPageContainer
+            headerType="simple"
+            title="Perfil"
+            description="Gerencie seus dados de perfil e mantenha sempre atualizado."
+            className="xl:flex-row"
+        >
             <Card className="gap-4 xl:max-w-md">
                 <CardHeader className="flex flex-col sm:flex-row sm:items-center md:flex-col md:items-start lg:flex-row lg:items-center gap-4 [&>div]:flex-1">
                     <div className="flex items-center gap-4">
@@ -70,7 +68,7 @@ const ProfilePage: FC = () => {
 
                     {/* Especializações */}
                     <div>
-                        <h2 className="text-zinc-800 text-md font-semibold">Especializações</h2>
+                        <h2 className="text-zinc-800 dark:text-white text-md font-semibold">Especializações</h2>
                         <div className="flex items-center flex-wrap w-full gap-2 mt-2">
                             {
                                 // user?.profiles?.psychologist?.specializations.map((specialization) => (
@@ -92,7 +90,7 @@ const ProfilePage: FC = () => {
                     <CardTitle>Configurações</CardTitle>
                     <Tabs defaultValue="personal" onValueChange={handleTabClick} className='rounded-md overflow-hidden'>
                         <TabsList className='flex w-full p-0 not-last:'>
-                            <TabsTrigger className={tabItemsStyle} value="personal" >Pessoal</TabsTrigger>
+                            <TabsTrigger className={tabItemsStyle} value="personal">Pessoal</TabsTrigger>
                             <TabsTrigger className={tabItemsStyle} value="professional">Profissional</TabsTrigger>
                             <TabsTrigger className={tabItemsStyle} value="formation">Formação</TabsTrigger>
                             <TabsTrigger className={tabItemsStyle} value="profile">Perfil</TabsTrigger>
@@ -104,7 +102,7 @@ const ProfilePage: FC = () => {
                     </AutoHeightContainer>
                 </CardHeader>
             </Card>
-        </DefaultContainer>
+        </DefaultPageContainer>
     )
 }
 

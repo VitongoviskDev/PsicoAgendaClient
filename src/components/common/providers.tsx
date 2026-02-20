@@ -1,9 +1,11 @@
+import { ThemeProvider } from "../ui/theme-provider";
 import { AuthProvider } from '@/context/authContext';
 import { ClinicProvider } from '@/context/clinicContext';
 import { DialogProvider } from '@/context/dialogContext';
-import { HeaderProvider } from '@/context/headerContext';
 import { PatientProvider } from '@/context/patientContext';
+import { ProfileProvider } from '@/context/profileContext';
 import { StepperProvider } from '@/context/stepperContext';
+import { BreadCrumbProvider } from '@/context/breadCrumbContext';
 import { queryClient } from '@/lib/apis/queryClient';
 import { QueryClientProvider } from '@tanstack/react-query';
 import React, { type FC } from 'react';
@@ -16,26 +18,28 @@ interface ProvidesProps {
 }
 const Providers: FC<ProvidesProps> = ({ children }) => {
     return (
-        <>
+        <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
             <QueryClientProvider client={queryClient}>
                 <BrowserRouter>
                     <DialogProvider>
                         <ClinicProvider>
-                            <HeaderProvider>
-                                <AuthProvider>
+                            <AuthProvider>
+                                <ProfileProvider>
                                     <PatientProvider>
                                         <StepperProvider>
-                                            <Toaster />
-                                            {children}
+                                            <BreadCrumbProvider>
+                                                <Toaster />
+                                                {children}
+                                            </BreadCrumbProvider>
                                         </StepperProvider>
                                     </PatientProvider>
-                                </AuthProvider>
-                            </HeaderProvider>
+                                </ProfileProvider>
+                            </AuthProvider>
                         </ClinicProvider>
                     </DialogProvider>
                 </BrowserRouter>
             </QueryClientProvider>
-        </>
+        </ThemeProvider>
     )
 }
 

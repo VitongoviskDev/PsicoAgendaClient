@@ -1,6 +1,8 @@
 import z from "zod";
 import type { BaseCustomError, BasePayload, BaseResponse } from "../api";
 
+import type { User } from "../user/user";
+
 export const verifyEmailVerificationCodeSchema = z.object({
     code: z.string().min(7, "Nome deve conter pelo menos 3 caracteres")
 });
@@ -13,6 +15,10 @@ export interface VerifyEmailVerificationPayload extends BasePayload<{
     }
 }> { }
 
-export interface VerifyEmailVerificationResponse extends BaseResponse<{}> { }
+export interface VerifyEmailVerificationResponse extends BaseResponse<{
+    user: User;
+    access_token?: string;
+    onboarding_token?: string;
+}> { }
 
 export interface VerifyEmailVerificationCustomError extends BaseCustomError<{}> { }

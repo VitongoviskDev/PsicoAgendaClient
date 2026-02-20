@@ -1,12 +1,13 @@
-import { useCompleteClinic } from "@/hooks/clinic/useCompleteClinic";
+import { useRegisterClinic } from "@/hooks/clinic/useRegisterClinic";
 import { subscribe, unsubscribe } from "@/lib/eventBus";
 
-import type { Clinic, CompleteClinicPayload, CompleteClinicResponse } from "@/lib/types/clinic";
+import type { Clinic } from "@/lib/types/clinic";
+import type { RegisterClinicPayload, RegisterClinicResponse } from "@/lib/types/clinic/register-clinic";
 import { createContext, useEffect, useState, type ReactNode } from "react";
 
 interface ClinicContextType {
     currentClinic: Clinic | null;
-    handleCompleteClinic: (payload: CompleteClinicPayload) => Promise<CompleteClinicResponse>;
+    handleRegisterClinic: (payload: RegisterClinicPayload) => Promise<RegisterClinicResponse>;
 
     handleSwitchClinic: (clinic: Clinic) => Promise<void>;
 
@@ -26,7 +27,7 @@ export function ClinicProvider({ children }: { children: ReactNode }) {
     });
 
     // HOOKS
-    const completeClinicMutation = useCompleteClinic();
+    const registerClinicMutation = useRegisterClinic();
 
     // EVENTS
     useEffect(() => {
@@ -54,12 +55,16 @@ export function ClinicProvider({ children }: { children: ReactNode }) {
         localStorage.removeItem("clinic-context-all")
     }
 
-    const handleCompleteClinic = async (payload: CompleteClinicPayload) => {
+    const handleRegisterClinic = async (payload: RegisterClinicPayload) => {
 
-        const response = await completeClinicMutation.mutateAsync(payload);
+        const response = await registerClinicMutation.mutateAsync(payload);
 
         setCurrentClinic(response.data.clinic);
         localStorage.setItem("clinic-context-current", JSON.stringify(response.data.clinic))
+
+        // Note: The caller (CompleteRegistrationStepClinic) should handle the user and token synchronization
+        // using handleUpdateUser or similar from AuthContext if needed, 
+        // but since the response is returned, we are good here.
         return response;
     }
 
@@ -78,7 +83,7 @@ export function ClinicProvider({ children }: { children: ReactNode }) {
                 currentClinic,
                 clinics,
 
-                handleCompleteClinic,
+                handleRegisterClinic,
                 handleSwitchClinic,
             }}
         >

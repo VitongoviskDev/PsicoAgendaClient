@@ -1,7 +1,7 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 
-type BadgeColor =
+export type BadgeColor =
     | "zinc"
     | "red"
     | "yellow"
@@ -40,9 +40,9 @@ const badgeColors: Record<BadgeColor, { bg: string; text: string; ring: string }
         ring: "inset-ring inset-ring-orange-400/50",
     },
     green: {
-        bg: "bg-green-400/10",
-        text: "text-green-400",
-        ring: "inset-ring inset-ring-green-400/50",
+        bg: "bg-primary/10",
+        text: "text-primary",
+        ring: "inset-ring inset-ring-primary/50",
     },
     lime: {
         bg: "bg-lime-400/10",

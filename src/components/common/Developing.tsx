@@ -71,7 +71,7 @@ const Developing: React.FC = () => {
 
 
     return (
-        <div className="flex min-h-[200px] flex-col items-center justify-center gap-4 rounded-md border border-dashed border-zinc-200 bg-zinc-50 text-center">
+        <div className="flex min-h-[200px] flex-col items-center justify-center gap-4 rounded-md border border-dashed border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900 text-center">
             <div className="flex size-14 items-center justify-center rounded-full bg-primary/10 text-primary">
                 <Construction className="size-7" />
             </div>

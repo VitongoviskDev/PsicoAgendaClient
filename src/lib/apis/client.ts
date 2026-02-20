@@ -6,6 +6,9 @@ type LogoutCallback = () => void;
 
 let logoutHandlers: LogoutCallback[] = []
 
+
+export const ACCESS_TOKEN_KEY = "auth_access_token";
+
 export function setLogoutHandler(callback: LogoutCallback) {
     logoutHandlers?.push(callback);
 }
@@ -18,7 +21,7 @@ export const api = axios.create({
 api.interceptors.request.use((config) => {
     if (!!config.headers.Authorization) return config;
 
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem(ACCESS_TOKEN_KEY);
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
     }
@@ -37,7 +40,7 @@ api.interceptors.response.use(
             const customError: ServerCustomError = {
                 status: status,
                 message: error.message,
-                error: error.error,
+                errors: error.error,
             }
 
             return Promise.reject(customError);

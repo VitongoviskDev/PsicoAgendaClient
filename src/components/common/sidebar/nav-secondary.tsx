@@ -19,13 +19,14 @@ export function NavSecondary({
   items,
   ...props
 }: {
-  items: NavSecondaryItem[]
+  items: (NavSecondaryItem | null)[]
 } & React.ComponentPropsWithoutRef<typeof SidebarGroup>) {
+  const filteredItems = items.filter((item) => item !== null);
   return (
     <SidebarGroup {...props}>
       <SidebarGroupContent>
         <SidebarMenu>
-          {items.map((item) => (
+          {filteredItems.map((item) => (
             <SidebarMenuItem key={item.title}>
               <SidebarMenuButton asChild size="sm">
                 <Link to={item.url}>

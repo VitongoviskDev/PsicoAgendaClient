@@ -1,6 +1,6 @@
 import { queryClient } from "@/lib/apis/queryClient";
 import { UserService } from "@/lib/services/user.service";
-import type { UpdateUserCustomError, UpdateUserPayload, UpdateUserResponse } from "@/lib/types/user";
+import type { UpdateUserCustomError, UpdateUserPayload, UpdateUserResponse } from "@/lib/types/user/user";
 import { useMutation } from "@tanstack/react-query";
 
 export function useUpdateUser() {

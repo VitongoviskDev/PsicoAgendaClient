@@ -17,6 +17,8 @@ import { useForm } from "react-hook-form"
 import { Link } from "react-router-dom"
 import { toast } from "sonner"
 
+import RegisterImage from '/images/auth/register.png'
+
 const RegisterPage = () => {
   const { handleRegister } = useAuthContext();
 
@@ -42,7 +44,7 @@ const RegisterPage = () => {
 
     } catch (err) {
       const customError = err as RegisterUserCustomError;
-      const errors = customError.error?.errors
+      const errors = customError.errors?.fields
       if (errors) {
         errors.map(err => {
           alert
@@ -69,16 +71,6 @@ const RegisterPage = () => {
                   </p>
                 </div>
                 <Field>
-                  <FieldLabel htmlFor="email">Email</FieldLabel>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="m@example.com"
-                    {...register("email")}
-                  />
-                  {errors.email && <FieldError>{errors.email.message}</FieldError>}
-                </Field>
-                <Field>
                   <FieldLabel htmlFor="name">Nome Completo</FieldLabel>
                   <Input
                     id="name"
@@ -87,6 +79,16 @@ const RegisterPage = () => {
                     {...register("name")}
                   />
                   {errors.name && <FieldError>{errors.name.message}</FieldError>}
+                </Field>
+                <Field>
+                  <FieldLabel htmlFor="email">Email</FieldLabel>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="m@example.com"
+                    {...register("email")}
+                  />
+                  {errors.email && <FieldError>{errors.email.message}</FieldError>}
                 </Field>
                 <Field>
                   <Field className="grid grid-cols-2 gap-4">
@@ -121,9 +123,9 @@ const RegisterPage = () => {
           </form>
           <div className="bg-muted relative hidden md:block">
             <img
-              src="/placeholder.svg"
+              src={RegisterImage}
               alt="Image"
-              className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+              className="absolute inset-0 h-full w-full object-cover"
             />
           </div>
         </CardContent>

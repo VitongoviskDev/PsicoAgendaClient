@@ -4,6 +4,7 @@ import type {
     TErrorField,
     TPicture
 } from "@/lib/types/api";
+import type { ProfileStatus } from "../psychologist";
 
 export interface User {
     id: string;
@@ -21,14 +22,20 @@ export interface User {
         patient: PatientProfile | null
     }
 }
+export const StaffProfileRole = {
+    OWNER: 'OWNER',
+    ADMIN: 'ADMIN',
+    EMPLOYEE: 'EMPLOYEE',
+} as const;
 
-type StaffProfileStatus = ""
+export type StaffProfileRole = (typeof StaffProfileRole)[keyof typeof StaffProfileRole];
 export interface StaffProfile {
-    active: boolean,
-    role: StaffProfileStatus
+    status: ProfileStatus,
+    role: StaffProfileRole
 }
 
 export interface PsychologistProfile {
+    id: string,
     active: boolean,
     crp: string,
     specialty: any
@@ -43,14 +50,14 @@ export interface PatientProfile {
 
 export const UserStatus = {
     PENDING_EMAIL_VERIFICATION: 'PENDING_EMAIL_VERIFICATION',
-    PENDING_REGISTRATION: 'PENDING_REGISTARTION',
+    EMAIL_VERIFIED: 'EMAIL_VERIFIED',
+    PENDING_REGISTRATION: 'PENDING_REGISTRATION',
     ACTIVE: 'ACTIVE',
     DISABLED: 'DISABLED',
     BLOCKED: 'BLOCKED',
 } as const;
 
 export type UserStatus = (typeof UserStatus)[keyof typeof UserStatus];
-
 
 //---------- RESPONSES --------------------------------------------------
 export interface UpdateUserResponse extends BaseResponse<{
@@ -60,11 +67,6 @@ export interface UpdateUserResponse extends BaseResponse<{
 export interface UserByCpfResponse extends BaseResponse<{
     user: User;
 }> { }
-
-export interface CompleteOwnerProfileResponse extends BaseResponse<{
-    user: User;
-}> { }
-
 //---------- ROUTE PARAMS --------------------------------------------------
 export type UpdateUserRouteParams = {
     id: string;
@@ -89,23 +91,11 @@ export type UserByCpfPayload = {
     routeParams: UserByCpfRouteParams
 }
 
-export interface CompleteOwnerProfilePayload {
-    cpf: string,
-    birthDate: Date,
-    phone: string,
-    actAsPsychologist: boolean,
-    crp?: string,
-    profile_picture?: TPicture;
-}
-
 //---------- ERRORS --------------------------------------------------
 export interface UpdateUserCustomError extends BaseCustomError<{
-    errors: TErrorField<"cpf" | "birthDate" | "phone" | "crp">[]
+    fields: TErrorField<"cpf" | "birthDate" | "phone" | "crp">[]
 }> { }
 
 export interface UserByCpfCustomError extends BaseCustomError<{
-    errors: TErrorField<"cpf">[]
-}> { }
-export interface CompleteOwnerProfileCustomError extends BaseCustomError<{
-    errors: TErrorField<"cpf" | "birthDate" | "phone" | "crp">[]
+    fields: TErrorField<"cpf">[]
 }> { }

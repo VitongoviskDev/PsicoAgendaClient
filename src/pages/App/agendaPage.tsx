@@ -1,6 +1,5 @@
 'use client'
-import DefaultContainer from '@/components/common/DefaultContainer';
-import { useHeaderContext } from '@/hooks/context/useHeaderContext';
+import DefaultPageContainer from '@/components/common/DefaultPageContainer';
 
 import {
     FaChevronLeft,
@@ -13,7 +12,7 @@ import {
 
 import AppointmentCard from '@/components/common/Appointment/appointmentCard';
 import AppointmentStatusBadge from '@/components/common/Appointment/appointmentStatusBadge';
-import CreateAppointmentDialog from '@/components/common/Modal/CreateAppointmentDialog';
+import CreateSessionDialog from '@/components/common/Modal/CreateSessionDialog';
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -29,19 +28,19 @@ import {
 } from '@/lib/types/appointment';
 import { addDays, isSameDay } from 'date-fns';
 import { useEffect, useState } from 'react';
+import { useListSessions } from '@/hooks/session/useListSessions';
+import { Spinner } from '@/components/ui/spinner';
 import Badge from '@/components/ui/badge';
+import type { Session, SessionStatus } from '@/lib/types/session';
+import ProfileGuard from '@/components/common/Auth/ProfileGuard';
+import { StaffProfileRole } from '@/lib/types/user/user';
+import StaffRoleGuard from '@/components/common/Auth/StaffRoleGuard';
 
 const AgendaPage = () => {
-    const { setPageTitle, setPageDescription } = useHeaderContext();
     const { openDialog } = useDialogContext();
 
     const [date, setDate] = useState<Date | undefined>(new Date());
     const [month, setMonth] = useState<Date | undefined>(new Date());
-
-    useEffect(() => {
-        setPageTitle("Agenda");
-        setPageDescription("Gerencie sua agenda de consultas de forma eficiente e organizada.");
-    }, [setPageTitle, setPageDescription]);
 
     const handleToday = () => {
         setDate(new Date());
@@ -62,90 +61,32 @@ const AgendaPage = () => {
         setMonth(newDate);
     };
 
-    function randomStatus() {
-        const statuses: AppointmentStatus[] = [
-            'confirmed',
-            'done',
-            'rescheduled',
-            'cancelled',
-            'absence',
-            'waiting'
-        ];
+    const { data: sessionsData, isLoading: isLoadingSessions } = useListSessions();
 
-        return statuses[Math.floor(Math.random() * statuses.length)];
-    }
 
-    function randomName() {
-        const names: string[] = [
-            'Stephany',
-            'Lucas',
-            'Mariana',
-            'Gabriel',
-            'Ana',
-            'Rafael',
-            'Juliana',
-            'Felipe',
-            'Camila',
-            'Bruno'
-        ];
-
-        const lastNames: string[] = [
-            'Silva',
-            'Santos',
-            'Oliveira',
-            'Souza',
-            'Rodrigues',
-            'Ferreira',
-            'Almeida',
-            'Costa',
-            'Gomes',
-            'Martins'
-        ];
-        const name = names[Math.floor(Math.random() * names.length)];
-        const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
-        return `${name} ${lastName}`;
-    }
-
-    function randomHour() {
-        const hours = Math.floor(Math.random() * 9) + 8; // 8h–16h
-        const minutes = Math.random() > 0.5 ? "00" : "30";
-        return `${hours.toString().padStart(2, "0")}:${minutes}`;
-    }
-
-    function randomDate(day: number) {
-        const hour = randomHour();
-        return new Date(`2025-01-${day.toString().padStart(2, "0")}T${hour}:00`);
-    }
-
-    const [appointments, setAppointments] = useState<Appointment[]>([])
-    useEffect(() => {
-        setAppointments(
-            Array.from({ length: 100 }, (_, i) => {
-                const day = (i % 10) + 1; // 1–10
-                return {
-                    id: i + 1,
-                    patientName: randomName(),
-                    date: randomDate(day),
-                    status: randomStatus(),
-                };
-            })
-        )
-    }, []);
-
-    // --- FILTER + SORT ---
+    const appointments: Appointment[] = sessionsData?.data.sessions.map((session: Session) => ({
+        id: session.id,
+        patientName: session.patient?.user.name || "Paciente",
+        date: new Date(session.date),
+        status: session.status || 'WAITING_CONFIRMATION|'
+    })) || [];
 
     const filteredAppointments = appointments
         .filter(a => {
             if (!date) return false;
-
             return isSameDay(a.date, date)
         })
         .sort((a, b) => a.date.getTime() - b.date.getTime());
 
 
     return (
-        <DefaultContainer>
-            <CreateAppointmentDialog date={date} />
+        <DefaultPageContainer
+            headerType="simple"
+            title="Agenda"
+            description="Gerencie sua agenda de consultas de forma eficiente e organizada."
+            breadcrumbs={[{ label: "Agenda" }]}
+        >
+            <CreateSessionDialog date={date} />
 
             <Card>
                 <CardHeader>
@@ -209,28 +150,36 @@ const AgendaPage = () => {
             </Card >
 
             {/* Appointments */}
-            < Card className='mt-6' >
+            < Card >
                 <CardHeader>
                     <CardTitle className='flex items-center gap-2'>
                         <LuCalendar />
                         Agendamentos para  {date ? date.toLocaleDateString("pt-BR", { weekday: 'long', year: '2-digit', month: 'short', day: 'numeric' }) : 'Select a date'}
                         <Badge rounded className='aspect-square text-xs' color='zinc'>{filteredAppointments.length}</Badge>
                     </CardTitle>
-                    <Button className='mt-2' onClick={() => openDialog("agenda-create-appointment")}>
-                        <LuCalendarPlus /> Novo Agendamento
-                    </Button>
+                    <StaffRoleGuard>
+                        <Button className='mt-2' onClick={() => openDialog("agenda-create-session")}>
+                            <LuCalendarPlus /> Novo Agendamento
+                        </Button>
+                    </StaffRoleGuard>
                 </CardHeader>
 
                 <CardContent className=''>
                     <ul role="list" className="divide-y divide-white/5">
 
-                        {filteredAppointments.length === 0 && (
+                        {isLoadingSessions && (
+                            <li className="py-8 flex justify-center">
+                                <Spinner />
+                            </li>
+                        )}
+
+                        {!isLoadingSessions && filteredAppointments.length === 0 && (
                             <li className="py-4 text-sm opacity-70">
                                 No appointments for this day.
                             </li>
                         )}
 
-                        {filteredAppointments.map((appointment) => (
+                        {!isLoadingSessions && filteredAppointments.map((appointment) => (
                             <li key={appointment.id}>
                                 <AppointmentCard appointment={appointment} />
                             </li>
@@ -238,7 +187,7 @@ const AgendaPage = () => {
                     </ul>
                 </CardContent>
             </Card >
-        </DefaultContainer >
+        </DefaultPageContainer >
     );
 };
 
@@ -247,13 +196,13 @@ export default AgendaPage;
 
 interface LegendItem {
     label: string;
-    status: AppointmentStatus;
+    status: SessionStatus;
 }
 const legendItems: LegendItem[] = [
-    { label: 'Agurdando', status: 'waiting' },
-    { label: 'Confirmado', status: 'confirmed' },
-    { label: 'Concluído', status: 'done' },
-    { label: 'Reagendado', status: 'rescheduled' },
-    { label: 'Cancelado', status: 'cancelled' },
-    { label: 'Falta', status: 'absence' },
+    { label: 'Agurdando', status: 'WAITING_CONFIRMATION' },
+    { label: 'Confirmado', status: 'CONFIRMED' },
+    { label: 'Concluído', status: 'COMPLETED' },
+    { label: 'Reagendado', status: 'RESCHEDULED' },
+    { label: 'Cancelado', status: 'CANCELED' },
+    // { label: 'Falta', status: 'absence' },
 ]

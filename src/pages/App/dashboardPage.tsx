@@ -1,29 +1,29 @@
-import DefaultContainer from '@/components/common/DefaultContainer';
+import DefaultPageContainer from '@/components/common/DefaultPageContainer';
 import PatientsStatisticsChart from '@/components/common/pages/patients/PatientsStatisticsChart';
 import type { StatsProps } from '@/components/common/Stats/statsCard';
 import StatsGrid from '@/components/common/Stats/statsGrid';
 import { useAuthContext } from '@/hooks/context/useAuthContext';
-import { useHeaderContext } from '@/hooks/context/useHeaderContext';
-import { useEffect } from 'react';
 import { LuCalendar, LuCircleAlert, LuClock4, LuUsers } from 'react-icons/lu';
 
 const DashboardPage = () => {
   const { user } = useAuthContext();
-  const { setPageTitle, setPageDescription } = useHeaderContext();
 
-  useEffect(() => {
-    setPageTitle("Dashboard");
-    setPageDescription(`Olá, ${user?.name}`);
-  }, [setPageTitle, setPageDescription, user]);
 
   return (
-    <DefaultContainer className="flex flex-col gap-12">
+    <DefaultPageContainer
+      headerType="simple"
+      title="Dashboard"
+      description={`Olá, ${user?.name}`}
+      breadcrumbs={[
+        { label: "Dashboard", to: "/dashboard" },
+      ]}
+    >
       <StatsGrid statsList={statsListItems} />
       <div className='grid xl:grid-cols-2 gap-4 '>
         <PatientsStatisticsChart />
         <PatientsStatisticsChart />
       </div>
-    </DefaultContainer>
+    </DefaultPageContainer>
   )
 }
 

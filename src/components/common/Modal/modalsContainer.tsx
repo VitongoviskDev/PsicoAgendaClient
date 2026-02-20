@@ -1,9 +1,11 @@
-import AddPatientDialog from './AddPatientDialog'
+import RegisterPatientDialog from './RegisterPatientDialog'
+import CreateSessionDialog from './CreateSessionDialog'
 
 const ModalsContainer = () => {
   return (
     <>
-      <AddPatientDialog />
+      <CreateSessionDialog />
+      <RegisterPatientDialog />
     </>
   )
 }
